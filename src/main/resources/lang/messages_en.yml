@@ -105,6 +105,7 @@ commands:
   player_not_found: "&cPlayer not found."
   role_sync_all: "&aRole synchronization started for {count} online players."
   role_sync_player: "&aRole synchronization started for {player}."
+  reward_preview_header: "&bLink reward status: &7Claimed &f{claimed}&7, remaining &f{remaining}"
   status_unknown: "Unknown"
   status_enabled: "&aEnabled"
   status_disabled: "&cDisabled"

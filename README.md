@@ -68,6 +68,7 @@ For managed deployments, provide a Base64-encoded 32-byte key through the `NEXDI
 | `/link` | `/eşle`, `/hesapeşle`, `/esle`, `/hesapesle` | Generate a temporary account-linking code. |
 | `/unlink` | `/eşlemesil`, `/eslemesil`, `/hesapayır`, `/hesapayir` | Remove the current Discord account link. |
 | `/linkstatus` | `/eşledurum`, `/esledurum`, `/hesabım`, `/hesabim` | Show the linked Discord account, link date, and 2FA state. |
+| `/linkreward` | `/eşleödül`, `/esleodul`, `/ödül`, `/odul` | Preview configured link rewards and remaining claims. |
 | `/2fa setup` | `/ikifaktör kur`, `/ikifaktor kur` | Begin TOTP setup and receive a QR map. |
 | `/2fa login <code>` | `/ikifaktör giriş <code>`, `/ikifaktor giris <code>` | Complete TOTP verification after joining. |
 | `/2fa disable <code>` | `/ikifaktör kapat <code>`, `/ikifaktor kapat <code>` | Disable TOTP after verification. |
@@ -108,6 +109,15 @@ Supported database types:
 
 - `sqlite`
 - `mysql`
+
+Optional PlaceholderAPI placeholders:
+
+- `%nexdiscord_linked%`
+- `%nexdiscord_discord_id%`
+- `%nexdiscord_discord_username%`
+- `%nexdiscord_2fa_enabled%`
+- `%nexdiscord_linked_at%`
+- `%nexdiscord_reward_count%`
 
 ## License
 

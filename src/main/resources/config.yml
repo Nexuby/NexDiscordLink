@@ -49,6 +49,19 @@ rewards:
     commands:
       - "eco give {player} 2000"
       - "give {player} golden_apple 2"
+    first-link-commands:
+      - "experience add {player} 250 points"
+    relink-commands: []
+    discord-role-commands:
+      "YOUR_SUPPORTER_ROLE_ID":
+        - "eco give {player} 1000"
+    preview:
+      - "&8&m--------------------------------"
+      - "&b&lDiscord Eşleme Ödülleri"
+      - "&7• &f2.000 oyun parası"
+      - "&7• &f2 altın elma"
+      - "&7• &fİlk eşlemede 250 XP"
+      - "&8&m--------------------------------"
 
 link-system:
   type: "BOTH" # Options: DM, MODAL, BOTH

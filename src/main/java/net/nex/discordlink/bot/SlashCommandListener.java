@@ -90,6 +90,7 @@ public class SlashCommandListener extends ListenerAdapter {
 
         plugin.getRoleManager().removePlayerRoles(discordId);
         plugin.getDatabaseManager().removePlayer(uuid);
+        plugin.refreshPlaceholders(uuid);
         event.getHook().sendMessage(plugin.getLanguageManager().getMessage("discord.command.unlink.success"))
                 .setEphemeral(true)
                 .queue();

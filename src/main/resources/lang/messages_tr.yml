@@ -105,6 +105,7 @@ commands:
   player_not_found: "&cOyuncu bulunamadı."
   role_sync_all: "&a{count} çevrimiçi oyuncu için rol senkronizasyonu başlatıldı."
   role_sync_player: "&a{player} için rol senkronizasyonu başlatıldı."
+  reward_preview_header: "&bEşleme ödülü durumu: &7Alınan &f{claimed}&7, kalan &f{remaining}"
   status_unknown: "Bilinmiyor"
   status_enabled: "&aEtkin"
   status_disabled: "&cKapalı"

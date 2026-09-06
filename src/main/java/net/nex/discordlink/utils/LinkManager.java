@@ -3,8 +3,11 @@ package net.nex.discordlink.utils;
 import net.nex.discordlink.NexDiscordLink;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.security.SecureRandom;
@@ -115,7 +118,7 @@ public class LinkManager {
 
             removeCode(code, uuid);
             failedAttempts.remove(discordId);
-            completeLink(uuid, discordName, replyCallback);
+            completeLink(uuid, discordId, discordName, replyCallback);
         } finally {
             codesInProgress.remove(code);
         }
@@ -127,7 +130,7 @@ public class LinkManager {
         }
     }
 
-    private void completeLink(UUID uuid, String discordName, Consumer<String> replyCallback) {
+    private void completeLink(UUID uuid, String discordId, String discordName, Consumer<String> replyCallback) {
         Bukkit.getScheduler().runTask(plugin, () -> {
             OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
             String playerName = player.getName() != null ? player.getName() : "Unknown";
@@ -140,11 +143,12 @@ public class LinkManager {
                 plugin.getLanguageManager().sendMessage(player.getPlayer(), "commands.link_success_player", "discord", discordName);
 
                 // Give Link Rewards
-                giveLinkRewards(player.getPlayer());
+                giveLinkRewards(player.getPlayer(), discordId);
 
                 // Sync Role
                 plugin.getRoleManager().syncPlayerRole(player.getPlayer());
             }
+            plugin.refreshPlaceholders(uuid);
         });
     }
 
@@ -172,7 +176,7 @@ public class LinkManager {
         }
     }
 
-    private void giveLinkRewards(org.bukkit.entity.Player player) {
+    private void giveLinkRewards(org.bukkit.entity.Player player, String discordId) {
         if (!plugin.getConfig().getBoolean("rewards.link-rewards.enabled", false)) return;
 
         int limit = plugin.getConfig().getInt("rewards.link-rewards.limit", 1);
@@ -183,8 +187,17 @@ public class LinkManager {
             return;
         }
 
-        // Give rewards
-        List<String> commands = plugin.getConfig().getStringList("rewards.link-rewards.commands");
+        LinkedHashSet<String> commands = new LinkedHashSet<>(
+                plugin.getConfig().getStringList("rewards.link-rewards.commands")
+        );
+        commands.addAll(plugin.getConfig().getStringList(
+                currentCount == 0
+                        ? "rewards.link-rewards.first-link-commands"
+                        : "rewards.link-rewards.relink-commands"
+        ));
+        commands.addAll(getDiscordRoleRewardCommands(discordId));
+
+        if (commands.isEmpty()) return;
         for (String cmd : commands) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("{player}", player.getName()));
         }
@@ -192,5 +205,28 @@ public class LinkManager {
         // Increment count
         plugin.getDatabaseManager().incrementLinkRewardCount(player.getUniqueId());
         plugin.getLanguageManager().sendMessage(player, "rewards.link_reward_received");
+    }
+
+    private List<String> getDiscordRoleRewardCommands(String discordId) {
+        List<String> commands = new ArrayList<>();
+        ConfigurationSection section = plugin.getConfig().getConfigurationSection(
+                "rewards.link-rewards.discord-role-commands"
+        );
+        if (section == null || plugin.getDiscordBot() == null || plugin.getDiscordBot().getJda() == null) {
+            return commands;
+        }
+
+        java.util.Set<String> roleIds = new java.util.HashSet<>();
+        for (net.dv8tion.jda.api.entities.Guild guild : plugin.getDiscordBot().getJda().getGuilds()) {
+            net.dv8tion.jda.api.entities.Member member = guild.getMemberById(discordId);
+            if (member == null) continue;
+            for (net.dv8tion.jda.api.entities.Role role : member.getRoles()) {
+                roleIds.add(role.getId());
+            }
+        }
+        for (String roleId : section.getKeys(false)) {
+            if (roleIds.contains(roleId)) commands.addAll(section.getStringList(roleId));
+        }
+        return commands;
     }
 }

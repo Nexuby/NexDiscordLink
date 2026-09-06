@@ -21,6 +21,7 @@ public class NexDiscordLink extends JavaPlugin {
     private net.nex.discordlink.utils.SensitiveDataProtector sensitiveDataProtector;
     private net.nex.discordlink.utils.ConsoleAppender consoleAppender;
     private net.nex.discordlink.utils.AuditLogger auditLogger;
+    private net.nex.discordlink.integrations.NexDiscordPlaceholderExpansion placeholderExpansion;
     private BukkitTask rewardTask;
     private BukkitTask roleSyncTask;
     private int botGeneration;
@@ -79,6 +80,13 @@ public class NexDiscordLink extends JavaPlugin {
         getCommand("unlink").setExecutor(new net.nex.discordlink.commands.UnlinkCommand(this));
         getCommand("2fa").setExecutor(new net.nex.discordlink.commands.TwoFactorCommand(this));
         getCommand("linkstatus").setExecutor(new net.nex.discordlink.commands.AccountStatusCommand(this));
+        getCommand("linkreward").setExecutor(new net.nex.discordlink.commands.LinkRewardCommand(this));
+
+        if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            placeholderExpansion = new net.nex.discordlink.integrations.NexDiscordPlaceholderExpansion(this);
+            placeholderExpansion.register();
+            getServer().getPluginManager().registerEvents(placeholderExpansion, this);
+        }
 
         scheduleRewards();
         scheduleRoleSync();
@@ -263,5 +271,9 @@ public class NexDiscordLink extends JavaPlugin {
 
     public net.nex.discordlink.utils.AuditLogger getAuditLogger() {
         return auditLogger;
+    }
+
+    public void refreshPlaceholders(java.util.UUID uuid) {
+        if (placeholderExpansion != null) placeholderExpansion.refresh(uuid);
     }
 }

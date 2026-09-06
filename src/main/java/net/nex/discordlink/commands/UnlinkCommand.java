@@ -41,6 +41,7 @@ public class UnlinkCommand implements CommandExecutor {
         }
 
         plugin.getDatabaseManager().removePlayer(player.getUniqueId());
+        plugin.refreshPlaceholders(player.getUniqueId());
         plugin.getAuditLogger().log(ACCOUNT_UNLINKED, player.getName(), "Minecraft command");
         plugin.getLanguageManager().sendMessage(player, "commands.unlink_success");
 

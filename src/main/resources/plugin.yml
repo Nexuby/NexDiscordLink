@@ -4,7 +4,7 @@ main: net.nex.discordlink.NexDiscordLink
 api-version: 1.16
 authors: [Nexuby]
 description: A comprehensive Discord-Minecraft bridging plugin.
-softdepend: [Vault]
+softdepend: [Vault, PlaceholderAPI]
 commands:
   nexdiscord:
     description: Main command for NexDiscordLink
@@ -26,6 +26,10 @@ commands:
     description: Show the current Discord account link status
     usage: /linkstatus
     aliases: ["eşledurum", esledurum, hesapdurum, "hesabım", hesabim]
+  linkreward:
+    description: Preview account link rewards
+    usage: /linkreward
+    aliases: ["eşleödül", esleodul, "ödül", odul]
 permissions:
   nexdiscord.link:
     description: Allows players to link their Minecraft and Discord accounts
@@ -38,6 +42,9 @@ permissions:
     default: true
   nexdiscord.status:
     description: Allows players to view their account link status
+    default: true
+  nexdiscord.reward.preview:
+    description: Allows players to preview account link rewards
     default: true
   nexdiscord.reload:
     description: Allows reloading NexDiscordLink configuration
