@@ -192,15 +192,16 @@ public class SQLiteDatabase implements DatabaseManager {
     }
 
     @Override
-    public void updateIpAddress(UUID uuid, String ip) {
+    public boolean updateIpAddress(UUID uuid, String ip) {
         String query = "UPDATE nex_discord_link SET ip_address = ? WHERE uuid = ?";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, ip);
             ps.setString(2, uuid.toString());
-            ps.executeUpdate();
+            return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

@@ -11,9 +11,17 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 
 import java.awt.Color;
 import java.net.InetAddress;
@@ -52,7 +60,7 @@ public class SecurityListener implements Listener {
             // Continue to check 2FA...
         } else if (!storedIp.equals(currentIp)) {
             // IP Mismatch! Freeze player and send DM
-            securityManager.freezePlayer(player);
+            String verificationToken = securityManager.beginVerification(player, discordId, currentIp);
 
             // Send DM
             if (plugin.getDiscordBot() != null && plugin.getDiscordBot().getJda() != null) {
@@ -64,10 +72,18 @@ public class SecurityListener implements Listener {
 
                     user.openPrivateChannel().queue(channel -> {
                         channel.sendMessageEmbeds(embed.build())
-                                .setActionRow(Button.success("verify_login:" + player.getUniqueId(), plugin.getLanguageManager().getMessage("security.dm_verify_button")))
-                                .queue();
-                    });
-                });
+                                .setActionRow(Button.success(
+                                        "verify_login:" + player.getUniqueId() + ":" + verificationToken,
+                                        plugin.getLanguageManager().getMessage("security.dm_verify_button")
+                                ))
+                                .queue(
+                                        success -> {},
+                                        error -> handleDiscordDeliveryFailure(player.getUniqueId(), verificationToken)
+                                );
+                    }, error -> handleDiscordDeliveryFailure(player.getUniqueId(), verificationToken));
+                }, error -> handleDiscordDeliveryFailure(player.getUniqueId(), verificationToken));
+            } else {
+                handleDiscordDeliveryFailure(player.getUniqueId(), verificationToken);
             }
         }
 
@@ -137,5 +153,68 @@ public class SecurityListener implements Listener {
         if (securityManager.isFrozen(event.getPlayer()) || plugin.getTwoFactorManager().isPendingVerification(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player player && isRestricted(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (event.getWhoClicked() instanceof Player player && isRestricted(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (isRestricted(event.getPlayer())) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if (isRestricted(event.getPlayer())) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onInteractEntity(PlayerInteractEntityEvent event) {
+        if (isRestricted(event.getPlayer())) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onSwapHands(PlayerSwapHandItemsEvent event) {
+        if (isRestricted(event.getPlayer())) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPickup(EntityPickupItemEvent event) {
+        if (event.getEntity() instanceof Player player && isRestricted(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player player && isRestricted(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean isRestricted(Player player) {
+        return securityManager.isFrozen(player)
+                || plugin.getTwoFactorManager().isPendingVerification(player.getUniqueId());
+    }
+
+    private void handleDiscordDeliveryFailure(java.util.UUID uuid, String verificationToken) {
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            if (!securityManager.cancelVerification(uuid, verificationToken)) return;
+            Player player = plugin.getServer().getPlayer(uuid);
+            if (player != null && player.isOnline()) {
+                player.kickPlayer(plugin.getLanguageManager().getMessage("security.discord_unavailable"));
+            }
+        });
     }
 }

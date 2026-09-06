@@ -12,7 +12,7 @@ public interface DatabaseManager {
     UUID getPlayerUUID(String discordId);
     String getIpAddress(UUID uuid);
     boolean isLinked(UUID uuid);
-    void updateIpAddress(UUID uuid, String ip);
+    boolean updateIpAddress(UUID uuid, String ip);
 
     int getLinkRewardCount(UUID uuid);
     void incrementLinkRewardCount(UUID uuid);
