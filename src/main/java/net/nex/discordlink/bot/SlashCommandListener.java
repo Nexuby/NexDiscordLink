@@ -47,14 +47,17 @@ public class SlashCommandListener extends ListenerAdapter {
             return;
         }
 
+        Bukkit.getScheduler().runTask(plugin, () -> sendProfile(event, uuid));
+    }
+
+    private void sendProfile(SlashCommandInteractionEvent event, UUID uuid) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
         String playerName = offlinePlayer.getName();
         if (playerName == null) playerName = "Unknown";
 
-        boolean isOnline = offlinePlayer.isOnline();
-        String status = isOnline ?
-                plugin.getLanguageManager().getMessage("discord.command.profile.embed.status_online") :
-                plugin.getLanguageManager().getMessage("discord.command.profile.embed.status_offline");
+        String status = offlinePlayer.isOnline()
+                ? plugin.getLanguageManager().getMessage("discord.command.profile.embed.status_online")
+                : plugin.getLanguageManager().getMessage("discord.command.profile.embed.status_offline");
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(plugin.getLanguageManager().getMessage("discord.command.profile.embed.title"));

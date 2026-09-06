@@ -28,6 +28,7 @@ public class ChatBotListener extends ListenerAdapter {
                 .replace("{user}", event.getAuthor().getName())
                 .replace("{message}", event.getMessage().getContentDisplay());
 
-        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', message));
+        String formattedMessage = ChatColor.translateAlternateColorCodes('&', message);
+        Bukkit.getScheduler().runTask(plugin, () -> Bukkit.broadcastMessage(formattedMessage));
     }
 }

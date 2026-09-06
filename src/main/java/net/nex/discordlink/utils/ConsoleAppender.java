@@ -9,16 +9,20 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.bukkit.Bukkit;
 import com.google.gson.JsonObject;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ConsoleAppender extends AbstractAppender {
 
+    private static final int HTTP_TIMEOUT_MILLIS = 5000;
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss")
+            .withZone(ZoneId.systemDefault());
+
     private final NexDiscordLink plugin;
     private final Queue<String> logQueue = new ConcurrentLinkedQueue<>();
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     public ConsoleAppender(NexDiscordLink plugin) {
         super("NexDiscordLinkAppender", null, null);
@@ -40,7 +44,7 @@ public class ConsoleAppender extends AbstractAppender {
         // For now, just strip colors
         message = message.replaceAll("\u001B\\[[;\\d]*m", ""); // Strip ANSI colors
 
-        String time = dateFormat.format(new Date(event.getTimeMillis()));
+        String time = TIME_FORMAT.format(Instant.ofEpochMilli(event.getTimeMillis()));
         String level = event.getLevel().name();
 
         logQueue.add(String.format("[%s %s]: %s", time, level, message));
@@ -95,6 +99,8 @@ public class ConsoleAppender extends AbstractAppender {
             java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
+            conn.setConnectTimeout(HTTP_TIMEOUT_MILLIS);
+            conn.setReadTimeout(HTTP_TIMEOUT_MILLIS);
             conn.setDoOutput(true);
 
             try (java.io.OutputStream os = conn.getOutputStream()) {

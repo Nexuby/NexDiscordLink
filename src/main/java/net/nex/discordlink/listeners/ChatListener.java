@@ -2,6 +2,7 @@ package net.nex.discordlink.listeners;
 
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.nex.discordlink.NexDiscordLink;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -12,6 +13,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class ChatListener implements Listener {
+
+    private static final int HTTP_TIMEOUT_MILLIS = 5000;
 
     private final NexDiscordLink plugin;
 
@@ -29,7 +32,10 @@ public class ChatListener implements Listener {
         String playerName = event.getPlayer().getName();
 
         if (webhookUrl != null && !webhookUrl.isEmpty()) {
-            sendWebhook(webhookUrl, playerName, message);
+            Bukkit.getScheduler().runTaskAsynchronously(
+                    plugin,
+                    () -> sendWebhook(webhookUrl, playerName, message)
+            );
         } else if (channelId != null && !channelId.isEmpty()) {
             if (plugin.getDiscordBot().getJda() == null) return;
             TextChannel channel = plugin.getDiscordBot().getJda().getTextChannelById(channelId);
@@ -45,6 +51,8 @@ public class ChatListener implements Listener {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
+            connection.setConnectTimeout(HTTP_TIMEOUT_MILLIS);
+            connection.setReadTimeout(HTTP_TIMEOUT_MILLIS);
             connection.setDoOutput(true);
 
             String avatarUrl = "https://mc-heads.net/avatar/" + username;
@@ -60,10 +68,13 @@ public class ChatListener implements Listener {
                 os.write(input, 0, input.length);
             }
 
-            connection.getResponseCode(); // Trigger request
+            int responseCode = connection.getResponseCode();
+            if (responseCode < 200 || responseCode >= 300) {
+                plugin.getLogger().warning("Discord chat webhook returned HTTP " + responseCode);
+            }
             connection.disconnect();
         } catch (Exception e) {
-            e.printStackTrace();
+            plugin.getLogger().warning("Could not send Discord chat webhook: " + e.getMessage());
         }
     }
 

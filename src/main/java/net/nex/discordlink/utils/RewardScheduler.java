@@ -23,13 +23,16 @@ public class RewardScheduler extends BukkitRunnable {
         if (commands.isEmpty()) return;
 
         // Collect online linked players on main thread, then check DB async
-        List<Player> onlinePlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
+        List<UUID> onlinePlayerIds = new ArrayList<>();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            onlinePlayerIds.add(player.getUniqueId());
+        }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             List<UUID> linkedPlayers = new ArrayList<>();
-            for (Player player : onlinePlayers) {
-                if (player.isOnline() && plugin.getDatabaseManager().isLinked(player.getUniqueId())) {
-                    linkedPlayers.add(player.getUniqueId());
+            for (UUID uuid : onlinePlayerIds) {
+                if (plugin.getDatabaseManager().isLinked(uuid)) {
+                    linkedPlayers.add(uuid);
                 }
             }
 
