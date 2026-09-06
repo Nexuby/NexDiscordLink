@@ -31,6 +31,8 @@ dependencies {
         exclude module: 'opus-java'
     }
     implementation 'com.zaxxer:HikariCP:5.0.1'
+    implementation 'org.xerial:sqlite-jdbc:3.53.2.1'
+    implementation 'com.mysql:mysql-connector-j:9.4.0'
     implementation 'org.bstats:bstats-bukkit:3.0.2'
 }
 
@@ -61,6 +63,7 @@ processResources {
 }
 
 shadowJar {
+    mergeServiceFiles()
     relocate 'net.dv8tion.jda', 'net.nex.discordlink.libs.jda'
     relocate 'org.bstats', 'net.nex.discordlink.libs.bstats'
     relocate 'com.zaxxer.hikari', 'net.nex.discordlink.libs.hikari'

@@ -32,7 +32,11 @@ public class NexDiscordLink extends JavaPlugin {
         languageManager.sendConsoleMessage("console.loading_lang");
 
         // Connect to Database
-        setupDatabase();
+        if (!setupDatabase()) {
+            languageManager.sendConsoleMessage("console.database_fatal");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         // Initialize Managers
         this.securityManager = new net.nex.discordlink.utils.SecurityManager(this);
@@ -94,14 +98,14 @@ public class NexDiscordLink extends JavaPlugin {
         sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&f"));
     }
 
-    private void setupDatabase() {
+    private boolean setupDatabase() {
         String type = getConfig().getString("database-settings.type", "sqlite");
         if (type.equalsIgnoreCase("mysql")) {
             this.databaseManager = new net.nex.discordlink.database.MySQLDatabase(this);
         } else {
             this.databaseManager = new net.nex.discordlink.database.SQLiteDatabase(this);
         }
-        this.databaseManager.init();
+        return this.databaseManager.init();
     }
 
     @Override

@@ -21,7 +21,7 @@ public class MySQLDatabase implements DatabaseManager {
     }
 
     @Override
-    public void init() {
+    public boolean init() {
         FileConfiguration config = plugin.getConfig();
         HikariConfig hikariConfig = new HikariConfig();
 
@@ -31,6 +31,8 @@ public class MySQLDatabase implements DatabaseManager {
         String username = config.getString("database-settings.username");
         String password = config.getString("database-settings.password");
 
+        hikariConfig.setPoolName("NexDiscordLink-MySQL");
+        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
         hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&autoReconnect=true");
         hikariConfig.setUsername(username);
         hikariConfig.setPassword(password);
@@ -40,15 +42,21 @@ public class MySQLDatabase implements DatabaseManager {
 
         try {
             dataSource = new HikariDataSource(hikariConfig);
-            createTable();
+            if (!createTable()) {
+                close();
+                return false;
+            }
             plugin.getLanguageManager().sendConsoleMessage("console.database_connected");
+            return true;
         } catch (Exception e) {
             plugin.getLanguageManager().sendConsoleMessage("console.database_error");
             e.printStackTrace();
+            close();
+            return false;
         }
     }
 
-    private void createTable() {
+    private boolean createTable() {
         String queryLink = "CREATE TABLE IF NOT EXISTS nex_discord_link (" +
                 "uuid VARCHAR(36) PRIMARY KEY, " +
                 "discord_id VARCHAR(20) NOT NULL, " +
@@ -75,9 +83,11 @@ public class MySQLDatabase implements DatabaseManager {
             } catch (SQLException ignored) {
                 // Column likely already exists
             }
+            return true;
         } catch (SQLException e) {
             plugin.getLanguageManager().sendConsoleMessage("console.database_error");
             e.printStackTrace();
+            return false;
         }
     }
 

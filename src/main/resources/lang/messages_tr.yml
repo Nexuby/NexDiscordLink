@@ -6,6 +6,7 @@ console:
   loading_lang: "Dil dosyaları yükleniyor..."
   database_connected: "Veritabanı bağlantısı başarılı."
   database_error: "Veritabanına bağlanılamadı!"
+  database_fatal: "Veritabanı başlatılamadı. Veri kaybını önlemek için NexDiscordLink devre dışı bırakıldı."
   bot_starting: "Discord botu başlatılıyor..."
   bot_started: "Discord botu {bot_name} olarak başlatıldı!"
   bot_error: "Discord botu başlatılamadı: {error}"

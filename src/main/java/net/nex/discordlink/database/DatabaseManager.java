@@ -3,7 +3,7 @@ package net.nex.discordlink.database;
 import java.util.UUID;
 
 public interface DatabaseManager {
-    void init();
+    boolean init();
     void close();
 
     void createPlayer(UUID uuid, String discordId);

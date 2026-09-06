@@ -6,6 +6,7 @@ console:
   loading_lang: "Loading language files..."
   database_connected: "Database connected successfully."
   database_error: "Failed to connect to database!"
+  database_fatal: "Database initialization failed. NexDiscordLink has been disabled to prevent data loss."
   bot_starting: "Starting Discord bot..."
   bot_started: "Discord bot started as {bot_name}!"
   bot_error: "Failed to start Discord bot: {error}"

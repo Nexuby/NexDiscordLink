@@ -22,7 +22,7 @@ public class SQLiteDatabase implements DatabaseManager {
     }
 
     @Override
-    public void init() {
+    public boolean init() {
         File file = new File(plugin.getDataFolder(), "database.db");
         if (!file.exists()) {
             try {
@@ -30,24 +30,37 @@ public class SQLiteDatabase implements DatabaseManager {
             } catch (IOException e) {
                 plugin.getLanguageManager().sendConsoleMessage("console.database_error");
                 e.printStackTrace();
-                return;
+                return false;
             }
         }
 
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:sqlite:" + file.getAbsolutePath());
-        config.setConnectionTestQuery("SELECT 1");
-        config.setMaxLifetime(60000); // 60 Sec
-        config.setIdleTimeout(45000); // 45 Sec
-        config.setMaximumPoolSize(1); // SQLite only supports 1 concurrent writer
+        try {
+            HikariConfig config = new HikariConfig();
+            config.setPoolName("NexDiscordLink-SQLite");
+            config.setDriverClassName("org.sqlite.JDBC");
+            config.setJdbcUrl("jdbc:sqlite:" + file.getAbsolutePath());
+            config.setConnectionTestQuery("SELECT 1");
+            config.setMaxLifetime(60000); // 60 Sec
+            config.setIdleTimeout(45000); // 45 Sec
+            config.setMaximumPoolSize(1); // SQLite only supports 1 concurrent writer
 
-        dataSource = new HikariDataSource(config);
+            dataSource = new HikariDataSource(config);
 
-        createTable();
-        plugin.getLanguageManager().sendConsoleMessage("console.database_connected");
+            if (!createTable()) {
+                close();
+                return false;
+            }
+            plugin.getLanguageManager().sendConsoleMessage("console.database_connected");
+            return true;
+        } catch (Exception e) {
+            plugin.getLanguageManager().sendConsoleMessage("console.database_error");
+            e.printStackTrace();
+            close();
+            return false;
+        }
     }
 
-    private void createTable() {
+    private boolean createTable() {
         String queryLink = "CREATE TABLE IF NOT EXISTS nex_discord_link (" +
                 "uuid VARCHAR(36) PRIMARY KEY, " +
                 "discord_id VARCHAR(20) NOT NULL, " +
@@ -75,9 +88,11 @@ public class SQLiteDatabase implements DatabaseManager {
                 // Column likely already exists
             }
 
+            return true;
         } catch (SQLException e) {
             plugin.getLanguageManager().sendConsoleMessage("console.database_error");
             e.printStackTrace();
+            return false;
         }
     }
 
