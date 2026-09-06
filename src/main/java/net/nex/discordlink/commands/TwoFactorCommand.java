@@ -1,6 +1,7 @@
 package net.nex.discordlink.commands;
 
 import net.nex.discordlink.NexDiscordLink;
+import net.nex.discordlink.commands.CommandAliases.TwoFactorAction;
 import net.nex.discordlink.utils.TwoFactorManager.VerificationResult;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,9 +41,9 @@ public class TwoFactorCommand implements CommandExecutor {
             return true;
         }
 
-        String subCommand = args[0].toLowerCase();
+        TwoFactorAction action = CommandAliases.getTwoFactorAction(args[0]);
 
-        if (subCommand.equals("setup")) {
+        if (action == TwoFactorAction.SETUP) {
             if (plugin.getTwoFactorManager().has2FA(player.getUniqueId())) {
                 plugin.getLanguageManager().sendMessage(player, "security.2fa_already_setup");
                 return true;
@@ -62,7 +63,7 @@ public class TwoFactorCommand implements CommandExecutor {
             return true;
         }
 
-        if (subCommand.equals("verify") || subCommand.equals("login")) {
+        if (action == TwoFactorAction.VERIFY) {
             if (args.length < 2) {
                 plugin.getLanguageManager().sendMessage(player, "commands.2fa_usage");
                 return true;
@@ -87,7 +88,7 @@ public class TwoFactorCommand implements CommandExecutor {
             return true;
         }
 
-        if (subCommand.equals("disable")) {
+        if (action == TwoFactorAction.DISABLE) {
             if (!plugin.getTwoFactorManager().has2FA(player.getUniqueId())) {
                 plugin.getLanguageManager().sendMessage(player, "security.2fa_not_setup");
                 return true;

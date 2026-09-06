@@ -81,7 +81,7 @@ commands:
   reload_failed: "&cYeniden yükleme başarısız oldu. Tutarsız durumu önlemek için NexDiscordLink devre dışı bırakıldı."
   no_permission: "&cBuna yetkiniz yok."
   link_success_player: "&aDiscord hesabına başarıyla bağlandınız: &b{discord}"
-  2fa_usage: "&cKullanım: /2fa <setup|login|disable>"
+  2fa_usage: "&cKullanım: /2fa <kur|giris|kapat> veya <setup|login|disable>"
   reset_reward_success: "&b{player} &aadlı oyuncunun ödül hakkı sıfırlandı."
   reset_reward_usage: "&cKullanım: /nexdiscord resetreward <oyuncu|all>"
   reset_reward_all_success: "&aTüm oyuncuların ödül hakları sıfırlandı."

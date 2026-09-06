@@ -81,7 +81,7 @@ commands:
   reload_failed: "&cReload failed. NexDiscordLink has been disabled to prevent an inconsistent state."
   no_permission: "&cYou do not have permission."
   link_success_player: "&aSuccessfully linked to Discord account: &b{discord}"
-  2fa_usage: "&cUsage: /2fa <setup|login|disable>"
+  2fa_usage: "&cUsage: /2fa <setup|login|disable> (Turkish: <kur|giris|kapat>)"
   reset_reward_success: "&aSuccessfully reset link reward count for &b{player}&a."
   reset_reward_usage: "&cUsage: /nexdiscord resetreward <player|all>"
   reset_reward_all_success: "&aSuccessfully reset link reward count for &ball players&a."

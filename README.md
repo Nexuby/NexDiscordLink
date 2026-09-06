@@ -63,15 +63,15 @@ For managed deployments, provide a Base64-encoded 32-byte key through the `NEXDI
 
 ### Minecraft
 
-| Command | Description |
-| --- | --- |
-| `/link` | Generate a temporary account-linking code. |
-| `/unlink` | Remove the current Discord account link. |
-| `/2fa setup` | Begin TOTP setup and receive a QR map. |
-| `/2fa login <code>` | Complete TOTP verification after joining. |
-| `/2fa disable <code>` | Disable TOTP after verification. |
-| `/nexdiscord reload` | Reload configuration and language files. |
-| `/nexdiscord resetreward <player\|all>` | Reset link-reward counters. |
+| Command | Turkish alternatives | Description |
+| --- | --- | --- |
+| `/link` | `/eşle`, `/hesapeşle`, `/esle`, `/hesapesle` | Generate a temporary account-linking code. |
+| `/unlink` | `/eşlemesil`, `/eslemesil`, `/hesapayır`, `/hesapayir` | Remove the current Discord account link. |
+| `/2fa setup` | `/ikifaktör kur`, `/ikifaktor kur` | Begin TOTP setup and receive a QR map. |
+| `/2fa login <code>` | `/ikifaktör giriş <code>`, `/ikifaktor giris <code>` | Complete TOTP verification after joining. |
+| `/2fa disable <code>` | `/ikifaktör kapat <code>`, `/ikifaktor kapat <code>` | Disable TOTP after verification. |
+| `/nexdiscord reload` | `/discordyönet yenile`, `/discordyonet yenile` | Reload configuration, database, scheduler, and Discord bot. |
+| `/nexdiscord resetreward <player\|all>` | `/discordyönet ödülsıfırla <oyuncu\|all>` | Reset link-reward counters. |
 
 ### Discord
 

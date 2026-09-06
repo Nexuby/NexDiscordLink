@@ -3,6 +3,7 @@ package net.nex.discordlink.listeners;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.nex.discordlink.NexDiscordLink;
+import net.nex.discordlink.commands.CommandAliases;
 import net.nex.discordlink.utils.SecurityManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -130,8 +131,7 @@ public class SecurityListener implements Listener {
         }
 
         if (plugin.getTwoFactorManager().isPendingVerification(event.getPlayer().getUniqueId())) {
-            String msg = event.getMessage().toLowerCase();
-            if (!msg.startsWith("/2fa") && !msg.startsWith("/login") && !msg.startsWith("/verify")) {
+            if (!CommandAliases.isAllowedDuringTwoFactorVerification(event.getMessage())) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage(plugin.getLanguageManager().getMessage("security.2fa_required"));
             }

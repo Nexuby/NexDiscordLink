@@ -9,15 +9,19 @@ commands:
   nexdiscord:
     description: Main command for NexDiscordLink
     usage: /nexdiscord <subcommand>
+    aliases: [nexdiscordlink, discordyonet, "discordyönet"]
   link:
     description: Link your Discord account
     usage: /link
+    aliases: ["eşle", "hesapeşle", esle, hesapesle]
   unlink:
     description: Unlink your Discord account
     usage: /unlink
+    aliases: ["eşlemesil", eslemesil, "hesapayır", hesapayir]
   2fa:
     description: Manage 2FA settings
     usage: /2fa <setup|verify|disable>
+    aliases: [ikifaktor, "ikifaktör", ikiasamali, "ikiaşamalı"]
 permissions:
   nexdiscord.link:
     description: Allows players to link their Minecraft and Discord accounts

@@ -18,7 +18,7 @@ public class MainCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length > 0) {
-            if (args[0].equalsIgnoreCase("reload")) {
+            if (CommandAliases.isReload(args[0])) {
                 if (!sender.hasPermission("nexdiscord.reload")) {
                     plugin.getLanguageManager().sendMessage(sender, "commands.no_permission");
                     return true;
@@ -28,7 +28,7 @@ public class MainCommand implements CommandExecutor {
                 return true;
             }
 
-            if (args[0].equalsIgnoreCase("resetreward")) {
+            if (CommandAliases.isResetReward(args[0])) {
                 String[] subArgs = new String[args.length - 1];
                 System.arraycopy(args, 1, subArgs, 0, args.length - 1);
                 return resetRewardCommand.onCommand(sender, command, label, subArgs);
