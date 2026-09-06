@@ -6,6 +6,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.ACCOUNT_UNLINKED;
+
 public class UnlinkCommand implements CommandExecutor {
 
     private final NexDiscordLink plugin;
@@ -39,6 +41,7 @@ public class UnlinkCommand implements CommandExecutor {
         }
 
         plugin.getDatabaseManager().removePlayer(player.getUniqueId());
+        plugin.getAuditLogger().log(ACCOUNT_UNLINKED, player.getName(), "Minecraft command");
         plugin.getLanguageManager().sendMessage(player, "commands.unlink_success");
 
         return true;

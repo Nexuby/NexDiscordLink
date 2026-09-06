@@ -9,6 +9,9 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.IP_VERIFIED;
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.VERIFICATION_FAILED;
+
 public class SecurityBotListener extends ListenerAdapter {
 
     private final NexDiscordLink plugin;
@@ -51,6 +54,7 @@ public class SecurityBotListener extends ListenerAdapter {
         String currentIp = player.getAddress().getAddress().getHostAddress();
         VerificationResult result = plugin.getSecurityManager().validateVerification(uuid, discordId, token, currentIp);
         if (result != VerificationResult.VALID) {
+            plugin.getAuditLogger().log(VERIFICATION_FAILED, player.getName(), "IP verification: " + result.name());
             event.getHook().sendMessage(messageFor(result)).queue();
             return;
         }
@@ -65,6 +69,7 @@ public class SecurityBotListener extends ListenerAdapter {
             return;
         }
 
+        plugin.getAuditLogger().log(IP_VERIFIED, player.getName(), "Network address verified");
         event.getHook().sendMessage(plugin.getLanguageManager().getMessage("security.verified_dm")).queue();
     }
 

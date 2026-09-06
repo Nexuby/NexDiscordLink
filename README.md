@@ -95,6 +95,8 @@ When enabled, `console-command.whitelist` is mandatory. Only the root commands l
 
 The main configuration is distributed from `src/main/resources/config.yml`. Localized messages live under `src/main/resources/lang/`.
 
+Account links, unlinks, 2FA changes, IP-verification outcomes, and administrator actions can be sent to the configured audit channel. Audit output automatically redacts named secrets, tokens, keys, and IPv4 addresses.
+
 Supported link modes:
 
 - `DM`

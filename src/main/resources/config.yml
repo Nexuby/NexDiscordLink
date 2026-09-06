@@ -31,6 +31,11 @@ channels:
   console-channel-id: "" # Optional fallback when console-webhook-url is empty
   console-webhook-url: "" # Optional: Use Webhook for console logs (Faster & Works during startup)
 
+audit-log:
+  enabled: true
+  channel-id: "" # Empty uses channels.log-channel-id
+  console: false
+
 rewards:
   salary-interval: 60 # In minutes
   commands:

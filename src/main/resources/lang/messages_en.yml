@@ -66,6 +66,23 @@ events:
   advancement_title: "Advancement Made"
   advancement_desc: "**{player}** has made the advancement **{advancement}**."
 
+audit:
+  title: "NexDiscordLink Audit Log"
+  field_event: "Event"
+  field_actor: "Account/Player"
+  field_detail: "Detail"
+  event:
+    account_linked: "Account linked"
+    account_unlinked: "Account unlinked"
+    two_factor_enabled: "2FA enabled"
+    two_factor_disabled: "2FA disabled"
+    two_factor_verified: "2FA verified"
+    verification_failed: "Verification failed"
+    ip_challenge: "New network verification requested"
+    ip_verified: "Network verified"
+    role_sync: "Role synchronized"
+    admin_action: "Administrator action"
+
 commands:
   player_only: "&cOnly players can use this command."
   help: "&bNexDiscordLink &7v{version} - Use &b/nexdiscord reload &7to reload config."

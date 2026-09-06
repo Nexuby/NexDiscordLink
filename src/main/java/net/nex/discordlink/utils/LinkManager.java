@@ -15,6 +15,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.ACCOUNT_LINKED;
+
 public class LinkManager {
 
     private final NexDiscordLink plugin;
@@ -131,6 +133,7 @@ public class LinkManager {
             String playerName = player.getName() != null ? player.getName() : "Unknown";
 
             replyCallback.accept(plugin.getLanguageManager().getMessage("link.success", "player", playerName));
+            plugin.getAuditLogger().log(ACCOUNT_LINKED, playerName, "Discord: " + discordName);
 
             // Notify player if online
             if (player.isOnline()) {

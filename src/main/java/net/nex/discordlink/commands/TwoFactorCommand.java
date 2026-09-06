@@ -8,6 +8,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.TWO_FACTOR_DISABLED;
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.TWO_FACTOR_ENABLED;
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.TWO_FACTOR_VERIFIED;
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.VERIFICATION_FAILED;
+
 public class TwoFactorCommand implements CommandExecutor {
 
     private final NexDiscordLink plugin;
@@ -111,6 +116,7 @@ public class TwoFactorCommand implements CommandExecutor {
             VerificationResult result = plugin.getTwoFactorManager().verifyStoredCode(player.getUniqueId(), code);
             if (result == VerificationResult.SUCCESS) {
                 if (plugin.getTwoFactorManager().remove2FA(player.getUniqueId())) {
+                    plugin.getAuditLogger().log(TWO_FACTOR_DISABLED, player.getName(), "2FA disabled");
                     plugin.getLanguageManager().sendMessage(player, "security.2fa_disabled");
                 } else {
                     plugin.getLanguageManager().sendMessage(player, "security.2fa_storage_error");
@@ -126,6 +132,15 @@ public class TwoFactorCommand implements CommandExecutor {
     }
 
     private void sendVerificationResult(Player player, VerificationResult result, boolean setup) {
+        if (result == VerificationResult.SUCCESS) {
+            plugin.getAuditLogger().log(
+                    setup ? TWO_FACTOR_ENABLED : TWO_FACTOR_VERIFIED,
+                    player.getName(),
+                    setup ? "2FA setup completed" : "2FA login completed"
+            );
+        } else if (result == VerificationResult.INVALID || result == VerificationResult.RATE_LIMITED) {
+            plugin.getAuditLogger().log(VERIFICATION_FAILED, player.getName(), "2FA: " + result.name());
+        }
         switch (result) {
             case SUCCESS -> plugin.getLanguageManager().sendMessage(
                     player,

@@ -27,6 +27,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import java.awt.Color;
 import java.net.InetAddress;
 
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.IP_CHALLENGE;
+
 public class SecurityListener implements Listener {
 
     private final NexDiscordLink plugin;
@@ -62,6 +64,7 @@ public class SecurityListener implements Listener {
         } else if (!securityManager.matchesIp(storedIp, currentIp)) {
             // IP Mismatch! Freeze player and send DM
             String verificationToken = securityManager.beginVerification(player, discordId, currentIp);
+            plugin.getAuditLogger().log(IP_CHALLENGE, player.getName(), "New network address requires verification");
 
             // Send DM
             if (plugin.getDiscordBot() != null && plugin.getDiscordBot().getJda() != null) {

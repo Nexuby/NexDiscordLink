@@ -12,6 +12,8 @@ import java.awt.Color;
 import java.time.Instant;
 import java.util.UUID;
 
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.ACCOUNT_UNLINKED;
+
 public class SlashCommandListener extends ListenerAdapter {
 
     private final NexDiscordLink plugin;
@@ -93,8 +95,11 @@ public class SlashCommandListener extends ListenerAdapter {
                 .queue();
 
         Bukkit.getScheduler().runTask(plugin, () -> {
-            if (Bukkit.getPlayer(uuid) != null) {
-                plugin.getLanguageManager().sendMessage(Bukkit.getPlayer(uuid), "commands.unlink_success");
+            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+            String playerName = player.getName() == null ? uuid.toString() : player.getName();
+            plugin.getAuditLogger().log(ACCOUNT_UNLINKED, playerName, "Discord command");
+            if (player.isOnline()) {
+                plugin.getLanguageManager().sendMessage(player.getPlayer(), "commands.unlink_success");
             }
         });
     }

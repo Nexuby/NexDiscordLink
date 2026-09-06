@@ -5,6 +5,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.ADMIN_ACTION;
+
 public class MainCommand implements CommandExecutor {
 
     private final NexDiscordLink plugin;
@@ -26,6 +28,7 @@ public class MainCommand implements CommandExecutor {
                     return true;
                 }
 
+                plugin.getAuditLogger().log(ADMIN_ACTION, sender.getName(), "Plugin reload requested");
                 plugin.reloadPlugin(sender);
                 return true;
             }

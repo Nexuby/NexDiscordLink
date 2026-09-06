@@ -66,6 +66,23 @@ events:
   advancement_title: "Başarım Kazanıldı"
   advancement_desc: "**{player}** şu başarımı kazandı: **{advancement}**."
 
+audit:
+  title: "NexDiscordLink Denetim Kaydı"
+  field_event: "İşlem"
+  field_actor: "Hesap/Oyuncu"
+  field_detail: "Ayrıntı"
+  event:
+    account_linked: "Hesap eşlendi"
+    account_unlinked: "Hesap eşlemesi kaldırıldı"
+    two_factor_enabled: "2FA etkinleştirildi"
+    two_factor_disabled: "2FA kapatıldı"
+    two_factor_verified: "2FA doğrulandı"
+    verification_failed: "Doğrulama başarısız"
+    ip_challenge: "Yeni ağ doğrulaması istendi"
+    ip_verified: "Ağ doğrulandı"
+    role_sync: "Rol senkronize edildi"
+    admin_action: "Yönetici işlemi"
+
 commands:
   player_only: "&cBu komutu sadece oyuncular kullanabilir."
   help: "&bNexDiscordLink &7v{version} - Yapılandırmayı yenilemek için &b/nexdiscord reload &7kullanın."

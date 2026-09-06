@@ -20,6 +20,7 @@ public class NexDiscordLink extends JavaPlugin {
     private net.nex.discordlink.utils.TwoFactorManager twoFactorManager;
     private net.nex.discordlink.utils.SensitiveDataProtector sensitiveDataProtector;
     private net.nex.discordlink.utils.ConsoleAppender consoleAppender;
+    private net.nex.discordlink.utils.AuditLogger auditLogger;
     private BukkitTask rewardTask;
     private int botGeneration;
 
@@ -58,6 +59,7 @@ public class NexDiscordLink extends JavaPlugin {
         this.linkManager = new net.nex.discordlink.utils.LinkManager(this);
         this.roleManager = new net.nex.discordlink.utils.RoleManager(this);
         this.twoFactorManager = new net.nex.discordlink.utils.TwoFactorManager(this, sensitiveDataProtector);
+        this.auditLogger = new net.nex.discordlink.utils.AuditLogger(this);
 
         // Initialize Console Appender
         this.consoleAppender = new net.nex.discordlink.utils.ConsoleAppender(this);
@@ -232,5 +234,9 @@ public class NexDiscordLink extends JavaPlugin {
 
     public net.nex.discordlink.utils.TwoFactorManager getTwoFactorManager() {
         return twoFactorManager;
+    }
+
+    public net.nex.discordlink.utils.AuditLogger getAuditLogger() {
+        return auditLogger;
     }
 }
