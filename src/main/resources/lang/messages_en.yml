@@ -61,7 +61,9 @@ commands:
   help: "&bNexDiscordLink &7v{version} - Use &b/nexdiscord reload &7to reload config."
   link_usage: "Usage: /link"
   link_already_linked: "&cYou are already linked!"
-  link_code_generated: "&aYour link code is: &b{code}&a. Send this code to the bot via DM."
+  link_code_generated_dm: "&aYour link code is: &b{code}&a. Send this code to the bot via DM."
+  link_code_generated_modal: "&aYour link code is: &b{code}&a. Enter it in the Discord link modal."
+  link_code_generated_both: "&aYour link code is: &b{code}&a. Send it to the bot via DM or enter it in the Discord link modal."
   unlink_success: "&aSuccessfully unlinked your account."
   unlink_not_linked: "&cYou are not linked!"
   reload_success: "&aConfiguration reloaded."
@@ -85,9 +87,14 @@ link:
   success: "Successfully linked to **{player}**!"
   invalid_code: "Invalid or expired code."
   already_linked: "You are already linked to a Minecraft account."
+  minecraft_already_linked: "That Minecraft account is already linked. Generate a new code if needed."
+  failed: "The account link could not be saved. Please try again."
+  code_in_use: "That code is already being verified. Please wait a moment."
+  rate_limited: "Too many invalid attempts. Wait one minute and try again."
 
 discord:
   modal:
+    disabled: "Modal linking is disabled on this server."
     embed:
       title: "Link Your Account"
       description: "Click the button below to link your Minecraft account with Discord."

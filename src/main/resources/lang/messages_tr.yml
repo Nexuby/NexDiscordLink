@@ -61,7 +61,9 @@ commands:
   help: "&bNexDiscordLink &7v{version} - Yapılandırmayı yenilemek için &b/nexdiscord reload &7kullanın."
   link_usage: "Kullanım: /link"
   link_already_linked: "&cZaten hesabınız bağlı!"
-  link_code_generated: "&aBağlantı kodunuz: &b{code}&a. Bu kodu bota DM üzerinden gönderin."
+  link_code_generated_dm: "&aBağlantı kodunuz: &b{code}&a. Bu kodu bota DM üzerinden gönderin."
+  link_code_generated_modal: "&aBağlantı kodunuz: &b{code}&a. Kodu Discord bağlantı penceresine girin."
+  link_code_generated_both: "&aBağlantı kodunuz: &b{code}&a. Kodu bota DM üzerinden gönderin veya Discord bağlantı penceresine girin."
   unlink_success: "&aHesap bağlantısı başarıyla kaldırıldı."
   unlink_not_linked: "&cHesabınız bağlı değil!"
   reload_success: "&aYapılandırma yeniden yüklendi."
@@ -85,9 +87,14 @@ link:
   success: "**{player}** hesabına başarıyla bağlandınız!"
   invalid_code: "Geçersiz veya süresi dolmuş kod."
   already_linked: "Zaten bir Minecraft hesabına bağlısınız."
+  minecraft_already_linked: "Bu Minecraft hesabı zaten bağlı. Gerekirse yeni bir kod oluşturun."
+  failed: "Hesap bağlantısı kaydedilemedi. Lütfen tekrar deneyin."
+  code_in_use: "Bu kod şu anda doğrulanıyor. Lütfen kısa bir süre bekleyin."
+  rate_limited: "Çok fazla hatalı deneme yaptınız. Bir dakika bekleyip tekrar deneyin."
 
 discord:
   modal:
+    disabled: "Modal ile hesap eşleme bu sunucuda devre dışı."
     embed:
       title: "Hesabını Bağla"
       description: "Minecraft hesabını Discord ile eşleştirmek için aşağıdaki butona tıkla."

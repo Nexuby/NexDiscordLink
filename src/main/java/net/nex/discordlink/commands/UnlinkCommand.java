@@ -23,6 +23,11 @@ public class UnlinkCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        if (!player.hasPermission("nexdiscord.unlink")) {
+            plugin.getLanguageManager().sendMessage(player, "commands.no_permission");
+            return true;
+        }
+
         if (!plugin.getDatabaseManager().isLinked(player.getUniqueId())) {
             plugin.getLanguageManager().sendMessage(player, "commands.unlink_not_linked");
             return true;

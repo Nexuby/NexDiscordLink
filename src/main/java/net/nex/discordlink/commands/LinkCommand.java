@@ -23,13 +23,26 @@ public class LinkCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        if (!player.hasPermission("nexdiscord.link")) {
+            plugin.getLanguageManager().sendMessage(player, "commands.no_permission");
+            return true;
+        }
+
         if (plugin.getDatabaseManager().isLinked(player.getUniqueId())) {
             plugin.getLanguageManager().sendMessage(player, "commands.link_already_linked");
             return true;
         }
 
         String code = plugin.getLinkManager().generateCode(player.getUniqueId());
-        plugin.getLanguageManager().sendMessage(player, "commands.link_code_generated", "code", code);
+        String messageKey;
+        if (plugin.getLinkManager().isDmEnabled() && plugin.getLinkManager().isModalEnabled()) {
+            messageKey = "commands.link_code_generated_both";
+        } else if (plugin.getLinkManager().isModalEnabled()) {
+            messageKey = "commands.link_code_generated_modal";
+        } else {
+            messageKey = "commands.link_code_generated_dm";
+        }
+        plugin.getLanguageManager().sendMessage(player, messageKey, "code", code);
 
         return true;
     }

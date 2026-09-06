@@ -16,8 +16,6 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.nex.discordlink.NexDiscordLink;
 
 import java.awt.Color;
-import java.util.UUID;
-
 public class ModalLinkListener extends ListenerAdapter {
 
     private final NexDiscordLink plugin;
@@ -29,6 +27,11 @@ public class ModalLinkListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equals("setup-link")) {
+            if (!plugin.getLinkManager().isModalEnabled()) {
+                event.reply(plugin.getLanguageManager().getMessage("discord.modal.disabled")).setEphemeral(true).queue();
+                return;
+            }
+
             if (event.getGuild() == null) {
                 event.reply(plugin.getLanguageManager().getMessage("discord.command.no_dm")).setEphemeral(true).queue();
                 return;
@@ -77,6 +80,11 @@ public class ModalLinkListener extends ListenerAdapter {
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (event.getComponentId().equals("link-button")) {
+            if (!plugin.getLinkManager().isModalEnabled()) {
+                event.reply(plugin.getLanguageManager().getMessage("discord.modal.disabled")).setEphemeral(true).queue();
+                return;
+            }
+
             TextInput codeInput = TextInput.create("code", plugin.getConfig().getString("link-system.modal.input-label", "Code"), TextInputStyle.SHORT)
                     .setPlaceholder(plugin.getConfig().getString("link-system.modal.input-placeholder", "Enter 4-digit code"))
                     .setMinLength(4)
@@ -95,17 +103,19 @@ public class ModalLinkListener extends ListenerAdapter {
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
         if (event.getModalId().equals("link-modal")) {
+            if (!plugin.getLinkManager().isModalEnabled()) {
+                event.reply(plugin.getLanguageManager().getMessage("discord.modal.disabled")).setEphemeral(true).queue();
+                return;
+            }
+
             String code = event.getValue("code").getAsString();
 
-            UUID uuid = plugin.getLinkManager().verifyCode(code);
-
-            if (uuid != null) {
-                plugin.getLinkManager().processLink(uuid, event.getUser().getId(), event.getUser().getName(), (response) -> {
-                    event.reply(response).setEphemeral(true).queue();
-                });
-            } else {
-                event.reply(plugin.getLanguageManager().getMessage("link.invalid_code")).setEphemeral(true).queue();
-            }
+            plugin.getLinkManager().processLinkCode(
+                    code,
+                    event.getUser().getId(),
+                    event.getUser().getName(),
+                    response -> event.reply(response).setEphemeral(true).queue()
+            );
         }
     }
 }

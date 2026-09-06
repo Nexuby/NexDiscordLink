@@ -24,6 +24,11 @@ public class TwoFactorCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        if (!player.hasPermission("nexdiscord.2fa")) {
+            plugin.getLanguageManager().sendMessage(player, "commands.no_permission");
+            return true;
+        }
+
         if (args.length == 0) {
             plugin.getLanguageManager().sendMessage(player, "commands.2fa_usage");
             return true;

@@ -18,3 +18,25 @@ commands:
   2fa:
     description: Manage 2FA settings
     usage: /2fa <setup|verify|disable>
+permissions:
+  nexdiscord.link:
+    description: Allows players to link their Minecraft and Discord accounts
+    default: true
+  nexdiscord.unlink:
+    description: Allows players to unlink their Discord account
+    default: true
+  nexdiscord.2fa:
+    description: Allows players to manage two-factor authentication
+    default: true
+  nexdiscord.reload:
+    description: Allows reloading NexDiscordLink configuration
+    default: op
+  nexdiscord.admin:
+    description: Allows administrative NexDiscordLink commands
+    default: op
+    children:
+      nexdiscord.reload: true
+      nexdiscord.update.notify: true
+  nexdiscord.update.notify:
+    description: Notifies administrators about available updates
+    default: op

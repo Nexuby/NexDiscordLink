@@ -6,6 +6,7 @@ import net.nex.discordlink.NexDiscordLink;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -77,6 +78,14 @@ public class MySQLDatabase implements DatabaseManager {
                 ps.execute();
             }
 
+            if (!hasUniqueDiscordIdIndex(conn)) {
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "CREATE UNIQUE INDEX idx_nex_discord_link_discord_id " +
+                        "ON nex_discord_link(discord_id)")) {
+                    ps.execute();
+                }
+            }
+
             // Migration for existing tables
             try (PreparedStatement ps = conn.prepareStatement("ALTER TABLE nex_discord_link ADD COLUMN secret_key VARCHAR(32)")) {
                 ps.execute();
@@ -91,6 +100,18 @@ public class MySQLDatabase implements DatabaseManager {
         }
     }
 
+    private boolean hasUniqueDiscordIdIndex(Connection conn) throws SQLException {
+        DatabaseMetaData metadata = conn.getMetaData();
+        try (ResultSet indexes = metadata.getIndexInfo(conn.getCatalog(), null, "nex_discord_link", true, false)) {
+            while (indexes.next()) {
+                if ("discord_id".equalsIgnoreCase(indexes.getString("COLUMN_NAME"))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public void close() {
         if (dataSource != null) {
@@ -99,16 +120,16 @@ public class MySQLDatabase implements DatabaseManager {
     }
 
     @Override
-    public void createPlayer(UUID uuid, String discordId) {
-        String query = "INSERT INTO nex_discord_link (uuid, discord_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE discord_id = ?";
+    public boolean createPlayer(UUID uuid, String discordId) {
+        String query = "INSERT INTO nex_discord_link (uuid, discord_id) VALUES (?, ?)";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, uuid.toString());
             ps.setString(2, discordId);
-            ps.setString(3, discordId);
-            ps.executeUpdate();
+            return ps.executeUpdate() == 1;
         } catch (SQLException e) {
-            e.printStackTrace();
+            plugin.getLogger().warning("Could not create account link: " + e.getMessage());
+            return false;
         }
     }
 

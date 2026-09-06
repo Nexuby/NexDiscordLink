@@ -81,6 +81,12 @@ public class SQLiteDatabase implements DatabaseManager {
                 ps.execute();
             }
 
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS idx_nex_discord_link_discord_id " +
+                    "ON nex_discord_link(discord_id)")) {
+                ps.execute();
+            }
+
             // Migration for existing tables
             try (PreparedStatement ps = conn.prepareStatement("ALTER TABLE nex_discord_link ADD COLUMN secret_key VARCHAR(32)")) {
                 ps.execute();
@@ -104,16 +110,16 @@ public class SQLiteDatabase implements DatabaseManager {
     }
 
     @Override
-    public void createPlayer(UUID uuid, String discordId) {
-        String query = "INSERT INTO nex_discord_link (uuid, discord_id) VALUES (?, ?) ON CONFLICT(uuid) DO UPDATE SET discord_id = ?";
+    public boolean createPlayer(UUID uuid, String discordId) {
+        String query = "INSERT INTO nex_discord_link (uuid, discord_id) VALUES (?, ?)";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, uuid.toString());
             ps.setString(2, discordId);
-            ps.setString(3, discordId);
-            ps.executeUpdate();
+            return ps.executeUpdate() == 1;
         } catch (SQLException e) {
-            e.printStackTrace();
+            plugin.getLogger().warning("Could not create account link: " + e.getMessage());
+            return false;
         }
     }
 

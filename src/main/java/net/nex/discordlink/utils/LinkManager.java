@@ -7,7 +7,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -17,13 +20,20 @@ public class LinkManager {
     private final NexDiscordLink plugin;
     private final Map<String, UUID> codeMap;
     private final Map<UUID, String> playerCodeMap;
-    private final Random random;
+    private final Map<String, Deque<Long>> failedAttempts;
+    private final java.util.Set<String> codesInProgress;
+    private final SecureRandom random;
+
+    private static final int MAX_FAILED_ATTEMPTS = 5;
+    private static final long ATTEMPT_WINDOW_MILLIS = Duration.ofMinutes(1).toMillis();
 
     public LinkManager(NexDiscordLink plugin) {
         this.plugin = plugin;
         this.codeMap = new ConcurrentHashMap<>();
         this.playerCodeMap = new ConcurrentHashMap<>();
-        this.random = new Random();
+        this.failedAttempts = new ConcurrentHashMap<>();
+        this.codesInProgress = ConcurrentHashMap.newKeySet();
+        this.random = new SecureRandom();
     }
 
     public String generateCode(UUID uuid) {
@@ -56,25 +66,66 @@ public class LinkManager {
         return code;
     }
 
-    public UUID verifyCode(String code) {
-        UUID uuid = codeMap.remove(code);
-        if (uuid != null) {
-            playerCodeMap.remove(uuid);
-        }
-        return uuid;
+    public boolean isDmEnabled() {
+        String type = plugin.getConfig().getString("link-system.type", "BOTH");
+        return !"MODAL".equalsIgnoreCase(type);
     }
 
-    public void processLink(UUID uuid, String discordId, String discordName, Consumer<String> replyCallback) {
-        // Check if discord user is already linked
-        if (plugin.getDatabaseManager().getPlayerUUID(discordId) != null) {
-            replyCallback.accept(plugin.getLanguageManager().getMessage("link.already_linked"));
+    public boolean isModalEnabled() {
+        String type = plugin.getConfig().getString("link-system.type", "BOTH");
+        return !"DM".equalsIgnoreCase(type);
+    }
+
+    public void processLinkCode(String code, String discordId, String discordName, Consumer<String> replyCallback) {
+        if (isRateLimited(discordId)) {
+            replyCallback.accept(plugin.getLanguageManager().getMessage("link.rate_limited"));
             return;
         }
 
-        // Link
-        plugin.getDatabaseManager().createPlayer(uuid, discordId);
+        UUID uuid = codeMap.get(code);
+        if (uuid == null) {
+            recordFailedAttempt(discordId);
+            replyCallback.accept(plugin.getLanguageManager().getMessage("link.invalid_code"));
+            return;
+        }
 
-        // Switch to main thread for Bukkit API interactions
+        if (!codesInProgress.add(code)) {
+            replyCallback.accept(plugin.getLanguageManager().getMessage("link.code_in_use"));
+            return;
+        }
+
+        try {
+            if (plugin.getDatabaseManager().getPlayerUUID(discordId) != null) {
+                replyCallback.accept(plugin.getLanguageManager().getMessage("link.already_linked"));
+                return;
+            }
+
+            if (plugin.getDatabaseManager().isLinked(uuid)) {
+                removeCode(code, uuid);
+                replyCallback.accept(plugin.getLanguageManager().getMessage("link.minecraft_already_linked"));
+                return;
+            }
+
+            if (!plugin.getDatabaseManager().createPlayer(uuid, discordId)) {
+                replyCallback.accept(plugin.getLanguageManager().getMessage("link.failed"));
+                return;
+            }
+
+            removeCode(code, uuid);
+            failedAttempts.remove(discordId);
+            completeLink(uuid, discordName, replyCallback);
+        } finally {
+            codesInProgress.remove(code);
+        }
+    }
+
+    private void removeCode(String code, UUID uuid) {
+        if (codeMap.remove(code, uuid)) {
+            playerCodeMap.remove(uuid, code);
+        }
+    }
+
+    private void completeLink(UUID uuid, String discordName, Consumer<String> replyCallback) {
         Bukkit.getScheduler().runTask(plugin, () -> {
             OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
             String playerName = player.getName() != null ? player.getName() : "Unknown";
@@ -92,6 +143,30 @@ public class LinkManager {
                 plugin.getRoleManager().syncPlayerRole(player.getPlayer());
             }
         });
+    }
+
+    private boolean isRateLimited(String discordId) {
+        Deque<Long> attempts = failedAttempts.get(discordId);
+        if (attempts == null) return false;
+
+        long cutoff = System.currentTimeMillis() - ATTEMPT_WINDOW_MILLIS;
+        synchronized (attempts) {
+            while (!attempts.isEmpty() && attempts.peekFirst() < cutoff) {
+                attempts.removeFirst();
+            }
+            if (attempts.isEmpty()) {
+                failedAttempts.remove(discordId, attempts);
+                return false;
+            }
+            return attempts.size() >= MAX_FAILED_ATTEMPTS;
+        }
+    }
+
+    private void recordFailedAttempt(String discordId) {
+        Deque<Long> attempts = failedAttempts.computeIfAbsent(discordId, ignored -> new ArrayDeque<>());
+        synchronized (attempts) {
+            attempts.addLast(System.currentTimeMillis());
+        }
     }
 
     private void giveLinkRewards(org.bukkit.entity.Player player) {

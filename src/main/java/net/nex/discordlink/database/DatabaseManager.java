@@ -6,7 +6,7 @@ public interface DatabaseManager {
     boolean init();
     void close();
 
-    void createPlayer(UUID uuid, String discordId);
+    boolean createPlayer(UUID uuid, String discordId);
     void removePlayer(UUID uuid);
     String getDiscordId(UUID uuid);
     UUID getPlayerUUID(String discordId);
