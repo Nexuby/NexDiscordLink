@@ -2,67 +2,68 @@
 
 [![Build](https://github.com/Nexuby/NexDiscordLink/actions/workflows/build.yml/badge.svg)](https://github.com/Nexuby/NexDiscordLink/actions/workflows/build.yml)
 
-NexDiscordLink; Minecraft oyuncularının Discord hesaplarını güvenli biçimde eşleştiren, rol ve kullanıcı adı senkronizasyonu sağlayan, iki aşamalı doğrulama, sohbet köprüsü, ödül sistemi ve proxy ağı desteği sunan Spigot/Paper eklentisidir.
+🇹🇷 **Türk kullanıcılar:** [Türkçe dokümantasyon için buraya tıklayın.](README_TR.md)
 
-## Özellikler
+NexDiscordLink is a Spigot/Paper plugin that securely links Minecraft players to Discord accounts and provides role and nickname synchronization, two-factor authentication, a chat bridge, configurable rewards, auditing, and proxy-network support.
 
-- Discord DM, etkileşimli modal veya slash komutuyla hesap eşleme
-- Türkçe ve İngilizce Minecraft komutları
-- Türkçe ve İngilizce Discord slash komutları
-- Tek Minecraft hesabı ↔ tek Discord hesabı politikası
-- Süreli, tek kullanımlık ve hız sınırlamalı eşleme kodları
-- TOTP tabanlı 2FA ve oyun içi QR haritası
-- IP değişikliğinde bağlı Discord hesabından giriş doğrulaması
-- 2FA veya Discord düğmesiyle güvenli eşleme kaldırma
-- Minecraft/Vault → Discord, Discord → Vault veya çift yönlü rol senkronizasyonu
-- Girişte, belirli aralıklarla veya yönetici komutuyla rol senkronizasyonu
-- Discord kullanıcı adı ve Minecraft kullanıcı adı senkronizasyonu
-- İlk eşleme, yeniden eşleme ve Discord rolüne özel ödüller
-- Çevrimiçi bağlı oyunculara periyodik maaş ödülü
-- Discord boost ödülleri
-- Çift yönlü Minecraft–Discord sohbet köprüsü
-- Katılma, ayrılma, ölüm ve başarım bildirimleri
-- Hassas verileri maskeleyen Discord denetim kayıtları
-- İsteğe bağlı, izin listeli Discord konsol komutu
-- SQLite, MySQL ve ortak MySQL kullanan Velocity/Bungee ağı desteği
-- PlaceholderAPI entegrasyonu
-- Türkçe ve İngilizce dil dosyaları
+## Features
 
-## Gereksinimler
+- Account linking through Discord DMs, an interactive modal, or slash commands
+- English and Turkish Minecraft commands
+- English and Turkish Discord slash commands
+- One Minecraft account ↔ one Discord account policy
+- Expiring, single-use, rate-limited link codes
+- TOTP two-factor authentication with an in-game QR map
+- Discord account verification when a player's IP address changes
+- Secure unlinking through TOTP or a Discord confirmation button
+- Minecraft/Vault → Discord, Discord → Vault, or bidirectional role synchronization
+- Role synchronization on join, on a schedule, or through an administrator command
+- Minecraft username to Discord nickname synchronization
+- First-link, relink, and Discord-role-specific rewards
+- Recurring salary rewards for online linked players
+- Discord boost rewards
+- Bidirectional Minecraft–Discord chat bridge
+- Join, quit, death, and advancement notifications
+- Discord audit logs with automatic sensitive-data redaction
+- Optional allowlisted Discord console command
+- SQLite, MySQL, and shared-MySQL Velocity/Bungee network support
+- PlaceholderAPI integration
+- English and Turkish language files
 
-- Java 17 veya üzeri
-- Spigot/Paper 1.16.5 veya üzeri
-- Discord botu
-- Rol senkronizasyonu için isteğe bağlı Vault ve uyumlu bir yetki eklentisi
-- Placeholder kullanımı için isteğe bağlı PlaceholderAPI
-- Proxy modu için bütün backend sunucularının erişebildiği MySQL veritabanı
+## Requirements
 
-Discord Developer Portal üzerinden bot için `Server Members Intent` ve `Message Content Intent` seçeneklerini etkinleştirin.
+- Java 17 or newer
+- Spigot or Paper 1.16.5 or newer
+- A Discord bot
+- Optional: Vault and a compatible permissions plugin for group synchronization
+- Optional: PlaceholderAPI for placeholders
+- A MySQL database reachable by every backend when proxy mode is enabled
 
-Kullanılan özelliklere göre bot rolünde `View Channels`, `Send Messages`, `Embed Links`, `Manage Roles`, `Manage Nicknames` ve ban senkronizasyonu açıksa `Ban Members` izinleri bulunmalıdır. Bot rolü, yöneteceği rollerin üzerinde olmalıdır.
+Enable the `Server Members Intent` and `Message Content Intent` privileged options in the Discord Developer Portal.
 
-## Kurulum
+Depending on the enabled features, the bot role needs `View Channels`, `Send Messages`, `Embed Links`, `Manage Roles`, `Manage Nicknames`, and—when ban synchronization is enabled—`Ban Members`. The bot role must be above every role it manages.
 
-1. `NexDiscordLink-<sürüm>.jar` dosyasını sunucunun `plugins` klasörüne kopyalayın.
-2. Sunucuyu bir kez başlatıp yapılandırma dosyalarının oluşmasını bekleyin.
-3. Sunucuyu tamamen durdurun.
-4. `plugins/NexDiscordLink/config.yml` içindeki bot tokenini, kanal ve rol kimliklerini yapılandırın.
-5. Türkçe kullanım için `settings.language: "tr"` ayarlayın.
-6. Discord Developer Portal üzerinden gerekli intent ve bot izinlerini etkinleştirin.
-7. Sunucuyu yeniden başlatın.
-8. Modal eşleme kullanıyorsanız Discord üzerinde `/setup-link` komutunu çalıştırın.
+## Installation
 
-Canlı bot tokenini, veritabanı parolasını, webhook adresini, `secret.key` dosyasını veya çalışan sunucunun yapılandırmasını GitHub'a göndermeyin.
+1. Copy `NexDiscordLink-<version>.jar` into the server's `plugins` directory.
+2. Start the server once and wait for the configuration files to be generated.
+3. Stop the server completely.
+4. Configure the bot token, channel IDs, and role IDs in `plugins/NexDiscordLink/config.yml`.
+5. Enable the required intents and permissions in the Discord Developer Portal.
+6. Start the server again.
+7. If modal linking is enabled, run `/setup-link` on Discord to publish the linking message.
 
-## Hızlı yapılandırma
+Never commit a live bot token, database password, webhook URL, `secret.key`, or a production server configuration to GitHub.
 
-### Tek sunucu
+## Quick configuration
 
-Varsayılan SQLite kurulumu tek sunucu için yeterlidir:
+### Single server
+
+The default SQLite storage is suitable for a single server:
 
 ```yaml
 settings:
-  language: "tr"
+  language: "en"
 
 proxy:
   enabled: false
@@ -76,11 +77,11 @@ link-system:
   code-expiry-minutes: 5
 ```
 
-`link-system.type` seçenekleri:
+Available `link-system.type` values:
 
-- `DM`: Kod Discord botuna özel mesajla gönderilir.
-- `MODAL`: Kod, Discord bağlantı penceresine girilir.
-- `BOTH`: İki yöntem de kullanılabilir.
+- `DM`: Players send the code to the bot through a direct message.
+- `MODAL`: Players enter the code in the Discord linking modal.
+- `BOTH`: Both methods are available.
 
 ### MySQL
 
@@ -91,16 +92,16 @@ database-settings:
   port: 3306
   database: "nexdiscordlink"
   username: "nexdiscordlink"
-  password: "GUCLU_BIR_PAROLA"
+  password: "USE_A_STRONG_PASSWORD"
 ```
 
-Veritabanı tabloları ve gerekli yeni sütunlar başlangıç sırasında otomatik oluşturulur. Veritabanı bağlantısı kurulamazsa eklenti tutarsız veri üretmemek için kendisini devre dışı bırakır.
+Database tables and required new columns are created automatically during startup. If the database connection cannot be established, the plugin disables itself to avoid inconsistent data.
 
-## Proxy ağı kurulumu
+## Proxy network setup
 
-Velocity veya BungeeCord ağında tüm backend sunucularında aynı MySQL bilgilerini kullanın. SQLite proxy modunda kabul edilmez.
+For a Velocity or BungeeCord network, use the same MySQL configuration on every backend. SQLite is rejected when proxy mode is enabled.
 
-Botun çalışacağı ana node:
+Designated bot node:
 
 ```yaml
 proxy:
@@ -110,7 +111,7 @@ proxy:
   link-check-interval-ticks: 40
 ```
 
-Diğer backend node'ları:
+Other backend nodes:
 
 ```yaml
 proxy:
@@ -120,79 +121,79 @@ proxy:
   link-check-interval-ticks: 40
 ```
 
-Her `server-id` benzersiz olmalıdır. Eşleme kodları ortak MySQL tablosunda süreli tutulur. Bot başka bir node'da kodu çözdüğünde kodu oluşturan backend, çevrimiçi oyuncuya bildirimi, ödülü ve rol senkronizasyonunu varsayılan olarak iki saniye içinde uygular.
+Every `server-id` must be unique. Link codes are stored with an expiration time in the shared MySQL database. When the bot redeems a code on another node, the backend where the code was generated applies the player notification, reward, and role synchronization within two seconds by default.
 
-IP değişikliği doğrulaması ve Discord üzerinden eşleme kaldırma onayı gibi anlık DM gerektiren özellikler botun çalıştığı node'a ihtiyaç duyar. Bot kapalı worker node'larında 2FA kullanın veya bu güvenlik akışlarını ağ mimarinize göre yapılandırın.
+Features that require immediate Discord DMs—such as IP-change verification and unlink approval—need a bot-enabled node. Use TOTP on bot-disabled worker nodes or configure these security flows for your network architecture.
 
-## Minecraft komutları
+## Minecraft commands
 
-| Ana komut | Türkçe alternatifler | Açıklama |
+| Primary command | Turkish alternatives | Description |
 | --- | --- | --- |
-| `/link` | `/eşle`, `/hesapeşle`, `/esle`, `/hesapesle` | Süreli hesap eşleme kodu oluşturur. |
-| `/unlink [2FA kodu]` | `/eşlemesil`, `/eslemesil`, `/hesapayır`, `/hesapayir` | Hesap eşlemesini güvenli biçimde kaldırır. |
-| `/linkstatus` | `/eşledurum`, `/esledurum`, `/hesabım`, `/hesabim` | Discord hesabını, eşleme tarihini ve 2FA durumunu gösterir. |
-| `/linkreward` | `/eşleödül`, `/esleodul`, `/ödül`, `/odul` | Eşleme ödüllerini ve kalan ödül hakkını gösterir. |
-| `/2fa setup` | `/ikifaktör kur`, `/ikifaktor kur` | 2FA kurulumunu başlatır ve QR haritası verir. |
-| `/2fa login <kod>` | `/ikifaktör giriş <kod>`, `/ikifaktor giris <kod>` | Giriş doğrulamasını tamamlar. |
-| `/2fa disable <kod>` | `/ikifaktör kapat <kod>`, `/ikifaktor kapat <kod>` | 2FA'yı doğrulama koduyla kapatır. |
-| `/nexdiscord reload` | `/discordyönet yenile`, `/discordyonet yenile` | Yapılandırmayı, veritabanını, zamanlayıcıları ve botu yeniler. |
-| `/nexdiscord status` | `/discordyönet durum`, `/discordyonet kontrol` | Veritabanı, bot, Discord sunucusu ve güvenlik durumunu gösterir. |
-| `/nexdiscord sync [oyuncu\|all]` | `/discordyönet senkronize [oyuncu\|tümü]` | Rol senkronizasyonunu hemen başlatır. |
-| `/nexdiscord resetreward <oyuncu\|all>` | `/discordyönet ödülsıfırla <oyuncu\|all>` | Eşleme ödülü sayaçlarını sıfırlar. |
+| `/link` | `/eşle`, `/hesapeşle`, `/esle`, `/hesapesle` | Generates an expiring account-link code. |
+| `/unlink [TOTP code]` | `/eşlemesil`, `/eslemesil`, `/hesapayır`, `/hesapayir` | Securely removes the account link. |
+| `/linkstatus` | `/eşledurum`, `/esledurum`, `/hesabım`, `/hesabim` | Shows the Discord account, link date, and 2FA state. |
+| `/linkreward` | `/eşleödül`, `/esleodul`, `/ödül`, `/odul` | Shows link rewards and remaining claims. |
+| `/2fa setup` | `/ikifaktör kur`, `/ikifaktor kur` | Starts TOTP setup and gives the player a QR map. |
+| `/2fa login <code>` | `/ikifaktör giriş <kod>`, `/ikifaktor giris <kod>` | Completes login verification. |
+| `/2fa disable <code>` | `/ikifaktör kapat <kod>`, `/ikifaktor kapat <kod>` | Disables TOTP after verifying the code. |
+| `/nexdiscord reload` | `/discordyönet yenile`, `/discordyonet yenile` | Reloads configuration, database, schedulers, and the bot. |
+| `/nexdiscord status` | `/discordyönet durum`, `/discordyonet kontrol` | Checks database, bot, guild, and security health. |
+| `/nexdiscord sync [player\|all]` | `/discordyönet senkronize [oyuncu\|tümü]` | Starts role synchronization immediately. |
+| `/nexdiscord resetreward <player\|all>` | `/discordyönet ödülsıfırla <oyuncu\|all>` | Resets link-reward counters. |
 
-## Discord komutları
+## Discord commands
 
-| Komut | Açıklama |
+| Command | Description |
 | --- | --- |
-| `/eşle kod:<kod>` / `/link code:<code>` | Minecraft hesabını eşler. |
-| `/hesap` / `/profile` | Eşlenen Minecraft profilini gösterir. |
-| `/eşlemeyi-kaldır` / `/unlink` | Hesap eşlemesini Discord tarafından kaldırır. |
-| `/yardım` / `/help` | Kullanılabilir hesap komutlarını gösterir. |
-| `/setup-link` | Modal eşleme mesajını seçili kanalda yayımlar. |
-| `/console command:<komut>` | Yalnızca açık ve izinli olduğunda sunucu komutu çalıştırır. |
+| `/link code:<code>` / `/eşle kod:<kod>` | Links a Minecraft account. |
+| `/profile` / `/hesap` | Shows the linked Minecraft profile. |
+| `/unlink` / `/eşlemeyi-kaldır` | Removes the account link from Discord. |
+| `/help` / `/yardım` | Shows available account commands. |
+| `/setup-link` | Publishes the modal-linking message in the selected channel. |
+| `/console command:<command>` | Executes an allowlisted server command when explicitly enabled. |
 
-Discord hesap komutlarının yanıtları gizli/ephemeral olarak gönderilir.
+Account-related Discord command responses are ephemeral.
 
-## Yetkiler
+## Permissions
 
-| Yetki | Varsayılan | Açıklama |
+| Permission | Default | Description |
 | --- | --- | --- |
-| `nexdiscord.link` | Herkes | Hesap eşleme kodu oluşturma |
-| `nexdiscord.unlink` | Herkes | Hesap eşlemesini kaldırma |
-| `nexdiscord.2fa` | Herkes | 2FA yönetimi |
-| `nexdiscord.status` | Herkes | Kendi hesap durumunu görüntüleme |
-| `nexdiscord.reward.preview` | Herkes | Eşleme ödüllerini görüntüleme |
-| `nexdiscord.reload` | OP | Yapılandırmayı yenileme |
-| `nexdiscord.admin` | OP | Durum, senkronizasyon ve ödül yönetimi |
-| `nexdiscord.update.notify` | OP | Güncelleme bildirimi alma |
+| `nexdiscord.link` | Everyone | Generate an account-link code |
+| `nexdiscord.unlink` | Everyone | Remove an account link |
+| `nexdiscord.2fa` | Everyone | Manage TOTP authentication |
+| `nexdiscord.status` | Everyone | View personal account status |
+| `nexdiscord.reward.preview` | Everyone | Preview link rewards |
+| `nexdiscord.reload` | OP | Reload the plugin configuration |
+| `nexdiscord.admin` | OP | Use status, synchronization, and reward administration |
+| `nexdiscord.update.notify` | OP | Receive update notifications |
 
-## Rol senkronizasyonu
+## Role synchronization
 
 ```yaml
 sync:
   linked-role:
     enabled: true
-    role-id: "DISCORD_ROL_ID"
+    role-id: "DISCORD_ROLE_ID"
   role-sync:
     enabled: true
     direction: "MINECRAFT_TO_DISCORD"
     interval-minutes: 5
     vault-groups:
-      vip: "VIP_DISCORD_ROL_ID"
-      mvp: "MVP_DISCORD_ROL_ID"
+      vip: "VIP_DISCORD_ROLE_ID"
+      mvp: "MVP_DISCORD_ROLE_ID"
 ```
 
-`direction` seçenekleri:
+Available `direction` values:
 
-- `MINECRAFT_TO_DISCORD`: Vault grubu Discord rolünü belirler.
-- `DISCORD_TO_MINECRAFT`: Discord rolü Vault grubunu belirler.
-- `BIDIRECTIONAL`: Eşlenen Discord rolü varsa Discord tarafı önceliklidir; eşlenen rol yoksa Minecraft grubu Discord'a uygulanır.
+- `MINECRAFT_TO_DISCORD`: The Vault group determines the Discord role.
+- `DISCORD_TO_MINECRAFT`: The Discord role determines the Vault group.
+- `BIDIRECTIONAL`: A configured Discord role takes priority when present; otherwise, the Minecraft group is applied to Discord.
 
-Eklenti yalnızca `vault-groups` altında tanımlanan grupları ve rolleri yönetir.
+Only groups and roles configured under `vault-groups` are managed.
 
-## Ödül sistemi
+## Rewards
 
-Ödüller konsol komutlarıyla tanımlandığı için ekonomi, eşya, XP veya başka eklentilerin komutları birlikte kullanılabilir:
+Rewards are configured as console commands, allowing economy, item, XP, and third-party plugin commands to be combined:
 
 ```yaml
 rewards:
@@ -206,71 +207,71 @@ rewards:
       - "experience add {player} 250 points"
     relink-commands: []
     discord-role-commands:
-      "DESTEKCI_DISCORD_ROL_ID":
+      "SUPPORTER_DISCORD_ROLE_ID":
         - "eco give {player} 1000"
 ```
 
-- `commands`: Her başarılı ve ödüle uygun eşlemede çalışır.
-- `first-link-commands`: Oyuncunun ilk ödüllü eşlemesinde çalışır.
-- `relink-commands`: Sonraki ödüllü eşlemelerde çalışır.
-- `discord-role-commands`: Oyuncunun sahip olduğu Discord rolüne göre ek komut çalıştırır.
-- `limit: 0`: Ödül alma sınırını kaldırır.
+- `commands`: Runs for every successful link that is eligible for rewards.
+- `first-link-commands`: Runs for the player's first rewarded link.
+- `relink-commands`: Runs for later rewarded links.
+- `discord-role-commands`: Adds commands based on the player's Discord roles.
+- `limit: 0`: Removes the reward-claim limit.
 
 ## PlaceholderAPI
 
-PlaceholderAPI kuruluysa genişletme otomatik kaydolur:
+The expansion registers automatically when PlaceholderAPI is installed:
 
-| Placeholder | Değer |
+| Placeholder | Value |
 | --- | --- |
-| `%nexdiscord_linked%` | Hesabın bağlı olup olmadığı (`true`/`false`) |
-| `%nexdiscord_discord_id%` | Bağlı Discord kullanıcı kimliği |
-| `%nexdiscord_discord_username%` | Önbellekteki Discord kullanıcı adı |
-| `%nexdiscord_2fa_enabled%` | 2FA durumu (`true`/`false`) |
-| `%nexdiscord_linked_at%` | Eşleme tarihi |
-| `%nexdiscord_reward_count%` | Alınan eşleme ödülü sayısı |
+| `%nexdiscord_linked%` | Whether the account is linked (`true`/`false`) |
+| `%nexdiscord_discord_id%` | Linked Discord user ID |
+| `%nexdiscord_discord_username%` | Cached Discord username |
+| `%nexdiscord_2fa_enabled%` | TOTP state (`true`/`false`) |
+| `%nexdiscord_linked_at%` | Link date |
+| `%nexdiscord_reward_count%` | Number of claimed link rewards |
 
-Placeholder değerleri sık kullanılan TAB ve scoreboard sistemlerinin veritabanını yormaması için asenkron olarak yenilenen 30 saniyelik önbellekten sunulur. İlk sorguda değer kısa süreliğine boş veya varsayılan olabilir.
+To avoid frequent TAB and scoreboard updates overloading the database, placeholder values are served from an asynchronously refreshed 30-second cache. On the first request, a value may briefly be empty or use its default.
 
-## Güvenlik
+## Security
 
-### Hassas veri koruması
+### Sensitive data protection
 
-- TOTP gizli anahtarları AES-GCM ile şifrelenir.
-- IP adresleri geri döndürülemeyen, anahtarlı HMAC parmak izi olarak saklanır.
-- Denetim kayıtlarında IP, token, secret ve key değerleri otomatik maskelenir.
-- Eşleme kodu ve 2FA doğrulamaları hız sınırına tabidir.
+- TOTP secrets are encrypted with AES-GCM.
+- IP addresses are stored as non-reversible keyed HMAC fingerprints.
+- Audit logs automatically redact IP, token, secret, and key values.
+- Link-code and TOTP verification attempts are rate-limited.
 
-İlk başlangıçta `plugins/NexDiscordLink/secret.key` oluşturulur. Bu dosyayı güvenli biçimde yedekleyin. Kaybolması veya değiştirilmesi mevcut şifreli 2FA anahtarlarının okunamamasına neden olur.
+On first startup, the plugin creates `plugins/NexDiscordLink/secret.key`. Back it up securely. Losing or replacing it makes existing encrypted TOTP secrets unreadable.
 
-Yönetilen kurulumlarda dosya yerine Base64 kodlu 32 baytlık anahtar kullanılabilir:
+Managed deployments can provide a Base64-encoded 32-byte key through an environment variable:
 
 ```text
-NEXDISCORDLINK_MASTER_KEY=<BASE64_KODLU_32_BAYTLIK_ANAHTAR>
+NEXDISCORDLINK_MASTER_KEY=<BASE64_ENCODED_32_BYTE_KEY>
 ```
 
-Anahtarı veya gerçek değerini GitHub'a göndermeyin.
+Never commit the key or its value.
 
-### Güvenli eşleme kaldırma
+### Secure unlinking
 
-- 2FA etkinse `/unlink <kod>` kullanılması gerekir.
-- 2FA etkin değilse bağlı Discord hesabına iki dakika geçerli onay düğmesi gönderilir.
-- Onay tokeni tek kullanımlıktır ve yalnızca bağlı Discord hesabı tarafından kullanılabilir.
-- Discord slash komutundan gelen `/unlink`, bağlı Discord hesabının doğrudan onayı sayılır.
+- When TOTP is enabled, `/unlink <code>` is required.
+- Without TOTP, a confirmation button valid for two minutes is sent to the linked Discord account.
+- The approval token is single-use and bound to the linked Discord account.
+- `/unlink` on Discord is treated as direct approval from the linked account.
 
-### Denetim kayıtları
+### Audit logs
 
-Eşleme, eşleme kaldırma, 2FA, başarısız doğrulama, IP doğrulaması, rol değişimi ve yönetici işlemleri Discord kanalına kaydedilebilir:
+Account links, unlinks, TOTP changes, failed verifications, IP verification, role changes, and administrator actions can be sent to Discord:
 
 ```yaml
 audit-log:
   enabled: true
-  channel-id: "" # Boşsa channels.log-channel-id kullanılır
+  channel-id: "" # Empty uses channels.log-channel-id
   console: false
 ```
 
-### Discord konsol komutu
+### Discord console command
 
-`/console` tam sunucu erişimi sağlayabildiği için varsayılan olarak kapalıdır:
+`/console` can grant full server access and is disabled by default:
 
 ```yaml
 console-command:
@@ -281,9 +282,9 @@ console-command:
     - "tps"
 ```
 
-Yalnızca kök komutu izin listesinde bulunan komutlar çalıştırılır. Boş izin listesi bütün komutları reddeder. Güvenilir Discord yöneticileri olmayan sunucularda bu özelliği açmayın.
+Only commands whose root command appears in the allowlist can execute. An empty allowlist denies every command. Do not enable this feature unless Discord administrator access is tightly controlled.
 
-## Derleme ve test
+## Build and test
 
 Windows:
 
@@ -297,36 +298,36 @@ Linux/macOS:
 ./gradlew clean test shadowJar
 ```
 
-Dağıtıma hazır gölgeli JAR şu konumda oluşturulur:
+The shaded, deployable artifact is generated at:
 
 ```text
-build/libs/NexDiscordLink-<sürüm>.jar
+build/libs/NexDiscordLink-<version>.jar
 ```
 
-Her push için GitHub Actions üzerinde temiz derleme ve test çalıştırılır.
+GitHub Actions runs a clean build and test suite for every push.
 
-## Güncelleme
+## Upgrading
 
-1. Sunucuyu tamamen durdurun.
-2. Mevcut JAR, `config.yml`, `database.db` veya MySQL veritabanı ve `secret.key` dosyasını yedekleyin.
-3. Eski JAR'ı yeni sürümle değiştirin.
-4. Sunucuyu yeniden başlatın ve başlangıç kayıtlarını kontrol edin.
-5. `/discordyönet durum` komutuyla veritabanı ve bot durumunu doğrulayın.
+1. Stop the server completely.
+2. Back up the current JAR, `config.yml`, `database.db` or MySQL database, and `secret.key`.
+3. Replace the old JAR with the new version.
+4. Start the server and review the startup logs.
+5. Run `/nexdiscord status` to verify the database and bot state.
 
-JAR güncellemelerinde `/reload` veya benzeri genel sunucu yenileme komutlarını kullanmayın. Eklentinin kendi `/discordyönet yenile` komutu yapılandırma değişiklikleri içindir.
+Do not use `/reload` or similar global reload commands for JAR updates. NexDiscordLink's own `/nexdiscord reload` command is intended for configuration changes.
 
-Mevcut dil dosyaları silinmek zorunda değildir; yeni mesaj anahtarları JAR içindeki güncel varsayılanlardan otomatik alınır.
+Existing language files do not need to be deleted. New message keys automatically fall back to the current defaults bundled in the JAR.
 
-## Sorun giderme
+## Troubleshooting
 
-- **Bot başlamıyor:** Tokeni, privileged intent seçeneklerini ve ağ erişimini kontrol edin.
-- **Slash komutları görünmüyor:** Önce eklentinin başarıyla başladığını ve botun doğru uygulama hesabına ait olduğunu doğrulayın.
-- **Roller değişmiyor:** Bot rol sırasını, `Manage Roles` iznini, Vault bağlantısını ve rol kimliklerini kontrol edin.
-- **Proxy modu başlamıyor:** Proxy modunda `database-settings.type` mutlaka `mysql` olmalıdır.
-- **Eşleme kodu kabul edilmiyor:** Kodun süresi dolmuş olabilir; Minecraft üzerinde yeniden `/eşle` çalıştırın.
-- **Discord DM gelmiyor:** Kullanıcının sunucu üyelerinden özel mesaj kabul ettiğini ve node üzerinde botun etkin olduğunu kontrol edin.
-- **2FA verileri okunamıyor:** Doğru `secret.key` veya `NEXDISCORDLINK_MASTER_KEY` değerinin kullanıldığını doğrulayın.
+- **The bot does not start:** Check the token, privileged intents, and network access.
+- **Slash commands are missing:** Confirm that the plugin started successfully and that the token belongs to the expected Discord application.
+- **Roles are not synchronized:** Check the bot role hierarchy, `Manage Roles` permission, Vault connection, and configured role IDs.
+- **Proxy mode does not start:** `database-settings.type` must be set to `mysql` in proxy mode.
+- **A link code is rejected:** It may have expired; run `/link` again in Minecraft.
+- **A Discord DM is not delivered:** Check the member's privacy settings and confirm that the bot is enabled on the current node.
+- **TOTP data cannot be read:** Verify that the correct `secret.key` or `NEXDISCORDLINK_MASTER_KEY` is in use.
 
-## Lisans
+## License
 
-NexDiscordLink [MIT Lisansı](LICENSE) ile yayımlanır.
+NexDiscordLink is released under the [MIT License](LICENSE).
