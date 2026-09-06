@@ -1,0 +1,83 @@
+# _____                                             _____
+#( ___ )                                           ( ___ )
+# |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   |
+# |   |                      _          __          |   |
+# |   |    _______  ______  (_)  ______/ /__ _   __ |   |
+# |   |   / ___/ / / / __ \/ / |/_/ __  / _ \ | / / |   |
+# |   |  / /  / /_/ / / / / />  </ /_/ /  __/ |/ /  |   |
+# |   | /_/   \__, /_/ /_/_/_/|_|\__,_/\___/|___/   |   |
+# |   |      /____/                                 |   |
+# |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___|
+#(_____)                                           (_____)
+
+# NexDiscordLink Configuration File
+
+bot-token: "YOUR_BOT_TOKEN_HERE" # Replace with your Discord Bot Token
+
+settings:
+  language: "en" # Options: en, tr
+  update-checker: true
+
+database-settings:
+  type: "sqlite" # Options: sqlite, mysql
+  host: "localhost"
+  port: 3306
+  database: "nexdiscordlink"
+  username: "root"
+  password: ""
+
+channels:
+  log-channel-id: "123456789012345678"
+  console-webhook-url: "" # Optional: Use Webhook for console logs (Faster & Works during startup)
+
+rewards:
+  salary-interval: 60 # In minutes
+  commands:
+    - "eco give {player} 1000"
+  boost-commands:
+    - "eco give {player} 5000"
+    - "give {player} diamond 5"
+  link-rewards:
+    enabled: true
+    limit: 1 # How many times a player can receive link rewards (0 = unlimited)
+    commands:
+      - "eco give {player} 2000"
+      - "give {player} golden_apple 2"
+
+link-system:
+  type: "BOTH" # Options: DM, MODAL, BOTH
+  modal:
+    channel-id: "YOUR_LINK_CHANNEL_ID"
+    button-label: "Link Account"
+    button-style: "PRIMARY" # PRIMARY (blue), SECONDARY (grey), SUCCESS (green), DANGER (red)
+    modal-title: "Link Your Account"
+    input-label: "Link Code"
+    input-placeholder: "Enter your 4-digit code"
+
+security-settings:
+  enabled: true
+
+console-command:
+  enabled: false # Enable /console slash command on Discord (DANGEROUS - allows full server access!)
+  # whitelist: [] # Optional: If set, only these commands can be executed (e.g., ["say", "list", "tps"])
+
+sync:
+  nickname:
+    enabled: true
+    format: "%name%"
+  ban:
+    enabled: false
+  linked-role:
+    enabled: true
+    role-id: "YOUR_LINKED_ROLE_ID"
+  role-sync:
+    enabled: true
+    vault-groups:
+      vip: "123456789012345678"
+      mvp: "123456789012345678"
+
+chat-bridge:
+  enabled: true
+  channel-id: "YOUR_CHAT_CHANNEL_ID"
+  webhook-url: "" # Optional: If set, uses webhook for Game -> Discord (Better visuals)
+  discord-to-game-format: "&8[&bDiscord&8] &f{user}: &7{message}"

@@ -1,0 +1,112 @@
+prefix: "&8[&bNexDiscordLink&8] &7"
+console:
+  enabled: "Plugin enabled successfully!"
+  disabled: "Plugin disabled successfully!"
+  loading_config: "Loading configuration..."
+  loading_lang: "Loading language files..."
+  database_connected: "Database connected successfully."
+  database_error: "Failed to connect to database!"
+  bot_starting: "Starting Discord bot..."
+  bot_started: "Discord bot started as {bot_name}!"
+  bot_error: "Failed to start Discord bot: {error}"
+  startup_config_loaded: "&a [✔] &fConfig Loaded"
+  startup_lang_loaded: "&a [✔] &fLanguage Loaded"
+  startup_database_connected: "&a [✔] &fDatabase Connected"
+  startup_bot_started: "&a [✔] &fDiscord Bot Started"
+  startup_ready: "&e Plugin is ready to use!"
+
+security:
+  player_not_online: "Player is not online!"
+  frozen_message: "&cYour IP has changed! Please verify your login via Discord DM."
+  dm_verify_title: "Login Verification"
+  dm_verify_desc: "A login attempt was made from IP: {ip}. Click the button below to verify."
+  dm_verify_button: "Verify Login"
+  verified_success: "&aLogin verified! You can now play."
+  verified_dm: "You have successfully verified your login."
+  kick_not_verified: "&cYou must verify your login on Discord!"
+  2fa_required: "&cTwo-Factor Authentication is enabled. Please use /2fa login <code> to verify."
+  2fa_already_setup: "&cYou already have 2FA enabled."
+  2fa_setup_instructions: "&aScan the QR code or use this secret key: &b{secret}"
+  2fa_map_given: "&aA map with the QR code has been added to your inventory."
+  2fa_setup_success: "&a2FA setup successful! Your account is now secured."
+  2fa_verified: "&a2FA verification successful. Welcome back!"
+  2fa_not_setup: "&cYou do not have 2FA enabled."
+  2fa_disabled: "&a2FA has been disabled."
+  2fa_disable_usage: "&cUsage: /2fa disable <code>"
+  invalid_code: "&cInvalid code. Please try again."
+
+rewards:
+  salary_received: "&aYou received your salary for being linked!"
+  boost_received: "&d&lBOOST! &fThank you for boosting! You received a reward."
+  link_reward_received: "&aYou received a reward for linking your account!"
+  link_reward_limit_reached: "&cYou have already claimed the maximum number of link rewards."
+
+sync:
+  ban_reason: "Banned from Minecraft Server: {reason}"
+  kick_reason: "Kicked from Minecraft Server: {reason}"
+
+events:
+  join_title: "Player Joined"
+  join_desc: "**{player}** has joined the server."
+  quit_title: "Player Left"
+  quit_desc: "**{player}** has left the server."
+  death_title: "Player Died"
+  death_desc: "{death_message}"
+  advancement_title: "Advancement Made"
+  advancement_desc: "**{player}** has made the advancement **{advancement}**."
+
+commands:
+  player_only: "&cOnly players can use this command."
+  help: "&bNexDiscordLink &7v{version} - Use &b/nexdiscord reload &7to reload config."
+  link_usage: "Usage: /link"
+  link_already_linked: "&cYou are already linked!"
+  link_code_generated: "&aYour link code is: &b{code}&a. Send this code to the bot via DM."
+  unlink_success: "&aSuccessfully unlinked your account."
+  unlink_not_linked: "&cYou are not linked!"
+  reload_success: "&aConfiguration reloaded."
+  no_permission: "&cYou do not have permission."
+  link_success_player: "&aSuccessfully linked to Discord account: &b{discord}"
+  2fa_usage: "&cUsage: /2fa <setup|login|disable>"
+  reset_reward_success: "&aSuccessfully reset link reward count for &b{player}&a."
+  reset_reward_all_success: "&aSuccessfully reset link reward count for &ball players&a."
+  player_not_found: "&cPlayer not found."
+
+update:
+  notification:
+    - "&8&m--------------------------------------------------"
+    - "&bNexDiscordLink &7update available!"
+    - "&7Current Version: &c{current_version}"
+    - "&7New Version: &a{new_version}"
+    - "&7Download: &b{link}"
+    - "&8&m--------------------------------------------------"
+
+link:
+  success: "Successfully linked to **{player}**!"
+  invalid_code: "Invalid or expired code."
+  already_linked: "You are already linked to a Minecraft account."
+
+discord:
+  modal:
+    embed:
+      title: "Link Your Account"
+      description: "Click the button below to link your Minecraft account with Discord."
+      footer: "NexDiscordLink System"
+    setup_sent: "Link message sent!"
+    success: "Successfully linked!"
+    fail: "Linking failed."
+  command:
+    no_dm: "This command cannot be used in DMs."
+    console:
+      disabled: "Console command is disabled in config."
+      success: "Command executed: `{command}`"
+      fail: "Failed to execute command: `{command}`"
+    profile:
+      description: "View your linked profile"
+      not_linked: "You are not linked to any Minecraft account!"
+      embed:
+        title: "Player Profile"
+        field_player: "Player"
+        field_uuid: "UUID"
+        field_status: "Status"
+        status_online: "Online"
+        status_offline: "Offline"

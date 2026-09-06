@@ -1,0 +1,159 @@
+package net.nex.discordlink;
+
+import net.nex.discordlink.config.ConfigManager;
+import net.nex.discordlink.config.LanguageManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class NexDiscordLink extends JavaPlugin {
+
+    private static NexDiscordLink instance;
+    private ConfigManager configManager;
+    private LanguageManager languageManager;
+    private net.nex.discordlink.database.DatabaseManager databaseManager;
+    private net.nex.discordlink.bot.DiscordBot discordBot;
+    private net.nex.discordlink.utils.SecurityManager securityManager;
+    private net.nex.discordlink.utils.SyncManager syncManager;
+    private net.nex.discordlink.utils.LinkManager linkManager;
+    private net.nex.discordlink.utils.RoleManager roleManager;
+    private net.nex.discordlink.utils.TwoFactorManager twoFactorManager;
+    private net.nex.discordlink.utils.ConsoleAppender consoleAppender;
+
+    @Override
+    public void onEnable() {
+        instance = this;
+
+        // Load Config
+        this.configManager = new ConfigManager(this);
+
+        // Load Language
+        this.languageManager = new LanguageManager(this);
+
+        languageManager.sendConsoleMessage("console.loading_config");
+        languageManager.sendConsoleMessage("console.loading_lang");
+
+        // Connect to Database
+        setupDatabase();
+
+        // Initialize Managers
+        this.securityManager = new net.nex.discordlink.utils.SecurityManager(this);
+        this.syncManager = new net.nex.discordlink.utils.SyncManager(this);
+        this.linkManager = new net.nex.discordlink.utils.LinkManager(this);
+        this.roleManager = new net.nex.discordlink.utils.RoleManager(this);
+        this.twoFactorManager = new net.nex.discordlink.utils.TwoFactorManager(this);
+
+        // Initialize Console Appender
+        this.consoleAppender = new net.nex.discordlink.utils.ConsoleAppender(this);
+        this.consoleAppender.register();
+
+        // Initialize Discord Bot
+        this.discordBot = new net.nex.discordlink.bot.DiscordBot(this);
+        this.discordBot.start();
+
+        // Register Listeners
+        getServer().getPluginManager().registerEvents(new net.nex.discordlink.listeners.SecurityListener(this, securityManager), this);
+        getServer().getPluginManager().registerEvents(new net.nex.discordlink.listeners.SyncListener(this, syncManager), this);
+        getServer().getPluginManager().registerEvents(new net.nex.discordlink.listeners.GameEventsListener(this), this);
+        getServer().getPluginManager().registerEvents(new net.nex.discordlink.listeners.ChatListener(this), this);
+        getServer().getPluginManager().registerEvents(new net.nex.discordlink.listeners.UpdateListener(this, 130935), this);
+
+        // Register Commands
+        getCommand("nexdiscord").setExecutor(new net.nex.discordlink.commands.MainCommand(this));
+        getCommand("link").setExecutor(new net.nex.discordlink.commands.LinkCommand(this));
+        getCommand("unlink").setExecutor(new net.nex.discordlink.commands.UnlinkCommand(this));
+        getCommand("2fa").setExecutor(new net.nex.discordlink.commands.TwoFactorCommand(this));
+
+        // Start Salary Scheduler
+        long interval = getConfig().getLong("rewards.salary-interval", 60) * 20 * 60; // Minutes to ticks
+        new net.nex.discordlink.utils.RewardScheduler(this).runTaskTimer(this, interval, interval);
+
+        // Initialize bStats
+        int pluginId = 28456; // Replace with your own plugin ID
+        new org.bstats.bukkit.Metrics(this, pluginId);
+
+        printStartupMessage();
+    }
+
+    private void printStartupMessage() {
+        org.bukkit.command.ConsoleCommandSender sender = org.bukkit.Bukkit.getConsoleSender();
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&b"));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&b  _   _           _____  _                       _ _     _       _    "));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&b | \\ | |         |  __ \\(_)                     | | |   (_)     | |   "));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&b |  \\| | _____  _| |  | |_ ___  ___ ___  _ __ __| | |    _ _ __ | | __"));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&b | . ` |/ _ \\ \\/ / |  | | / __|/ __/ _ \\| '__/ _` | |   | | '_ \\| |/ /"));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&b | |\\  |  __/>  <| |__| | \\__ \\ (_| (_) | | | (_| | |___| | | | |   < "));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&b |_| \\_|\\___/_/\\_\\_____/|_|___/\\___\\___/|_|  \\__,_|______|_|_| |_|_|\\_\\"));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&b                                                                       "));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&f NexDiscordLink &7v" + getDescription().getVersion() + " &fby &bNexuby"));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&f"));
+        sender.sendMessage(languageManager.getMessage("console.startup_config_loaded"));
+        sender.sendMessage(languageManager.getMessage("console.startup_lang_loaded"));
+        sender.sendMessage(languageManager.getMessage("console.startup_database_connected"));
+        sender.sendMessage(languageManager.getMessage("console.startup_bot_started"));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&f"));
+        sender.sendMessage(languageManager.getMessage("console.startup_ready"));
+        sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&f"));
+    }
+
+    private void setupDatabase() {
+        String type = getConfig().getString("database-settings.type", "sqlite");
+        if (type.equalsIgnoreCase("mysql")) {
+            this.databaseManager = new net.nex.discordlink.database.MySQLDatabase(this);
+        } else {
+            this.databaseManager = new net.nex.discordlink.database.SQLiteDatabase(this);
+        }
+        this.databaseManager.init();
+    }
+
+    @Override
+    public void onDisable() {
+        // Shutdown logic
+        if (consoleAppender != null) {
+            consoleAppender.unregister();
+        }
+        if (discordBot != null) {
+            discordBot.stop();
+        }
+        if (databaseManager != null) {
+            databaseManager.close();
+        }
+        if (languageManager != null) {
+            languageManager.sendConsoleMessage("console.disabled");
+        }
+    }
+
+    public static NexDiscordLink getInstance() {
+        return instance;
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public LanguageManager getLanguageManager() {
+        return languageManager;
+    }
+
+    public net.nex.discordlink.database.DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public net.nex.discordlink.utils.RoleManager getRoleManager() {
+        return roleManager;
+    }
+
+    public net.nex.discordlink.utils.LinkManager getLinkManager() {
+        return linkManager;
+    }
+
+    public net.nex.discordlink.bot.DiscordBot getDiscordBot() {
+        return discordBot;
+    }
+
+    public net.nex.discordlink.utils.SecurityManager getSecurityManager() {
+        return securityManager;
+    }
+
+    public net.nex.discordlink.utils.TwoFactorManager getTwoFactorManager() {
+        return twoFactorManager;
+    }
+}

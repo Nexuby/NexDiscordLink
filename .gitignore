@@ -1,0 +1,56 @@
+# Gradle
+.gradle/
+build/
+out/
+bin/
+gradle-temp/
+gradle.zip
+
+# Compiled artifacts
+*.class
+*.jar
+*.war
+*.ear
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE metadata
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+*.launch
+
+# Runtime and test servers
+run/
+server/
+test-server/
+plugins/
+logs/
+crash-reports/
+world/
+world_nether/
+world_the_end/
+
+# Runtime data and secrets
+.env
+.env.*
+!.env.example
+/config.yml
+/database.db
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Logs and JVM crash files
+*.log
+hs_err_pid*
+replay_pid*
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini

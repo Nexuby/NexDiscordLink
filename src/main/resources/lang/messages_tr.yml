@@ -1,0 +1,112 @@
+prefix: "&8[&bNexDiscordLink&8] &7"
+console:
+  enabled: "Eklenti başarıyla etkinleştirildi!"
+  disabled: "Eklenti başarıyla devre dışı bırakıldı!"
+  loading_config: "Yapılandırma yükleniyor..."
+  loading_lang: "Dil dosyaları yükleniyor..."
+  database_connected: "Veritabanı bağlantısı başarılı."
+  database_error: "Veritabanına bağlanılamadı!"
+  bot_starting: "Discord botu başlatılıyor..."
+  bot_started: "Discord botu {bot_name} olarak başlatıldı!"
+  bot_error: "Discord botu başlatılamadı: {error}"
+  startup_config_loaded: "&a [✔] &fYapılandırma Yüklendi"
+  startup_lang_loaded: "&a [✔] &fDil Dosyaları Yüklendi"
+  startup_database_connected: "&a [✔] &fVeritabanı Bağlandı"
+  startup_bot_started: "&a [✔] &fDiscord Botu Başlatıldı"
+  startup_ready: "&e Eklenti kullanıma hazır!"
+
+security:
+  player_not_online: "Oyuncu çevrimiçi değil!"
+  frozen_message: "&cIP adresiniz değişti! Lütfen Discord DM üzerinden girişinizi doğrulayın."
+  dm_verify_title: "Giriş Doğrulama"
+  dm_verify_desc: "Şu IP adresinden bir giriş denemesi yapıldı: {ip}. Doğrulamak için aşağıdaki butona tıklayın."
+  dm_verify_button: "Girişi Doğrula"
+  verified_success: "&aGiriş doğrulandı! Artık oynayabilirsiniz."
+  verified_dm: "Girişinizi başarıyla doğruladınız."
+  kick_not_verified: "&cDiscord üzerinden girişinizi doğrulamanız gerekiyor!"
+  2fa_required: "&cİki Aşamalı Doğrulama etkin. Lütfen /2fa login <kod> komutunu kullanarak doğrulayın."
+  2fa_already_setup: "&cZaten 2FA etkinleştirilmiş."
+  2fa_setup_instructions: "&aQR kodunu taratın veya bu gizli anahtarı kullanın: &b{secret}"
+  2fa_map_given: "&aQR kodunu içeren bir harita envanterinize eklendi."
+  2fa_setup_success: "&a2FA kurulumu başarılı! Hesabınız artık güvende."
+  2fa_verified: "&a2FA doğrulaması başarılı. Hoş geldiniz!"
+  2fa_not_setup: "&c2FA etkin değil."
+  2fa_disabled: "&a2FA devre dışı bırakıldı."
+  2fa_disable_usage: "&cKullanım: /2fa disable <kod>"
+  invalid_code: "&cGeçersiz kod. Lütfen tekrar deneyin."
+
+rewards:
+  salary_received: "&aHesabınız bağlı olduğu için maaşınızı aldınız!"
+  boost_received: "&d&lBOOST! &fTakviye yaptığınız için teşekkürler! Ödül kazandınız."
+  link_reward_received: "&aHesabınızı bağladığınız için ödül kazandınız!"
+  link_reward_limit_reached: "&cBağlantı ödülünü alma sınırına ulaştınız."
+
+sync:
+  ban_reason: "Minecraft Sunucusundan Yasaklandı: {reason}"
+  kick_reason: "Minecraft Sunucusundan Atıldı: {reason}"
+
+events:
+  join_title: "Oyuncu Katıldı"
+  join_desc: "**{player}** sunucuya katıldı."
+  quit_title: "Oyuncu Ayrıldı"
+  quit_desc: "**{player}** sunucudan ayrıldı."
+  death_title: "Oyuncu Öldü"
+  death_desc: "{death_message}"
+  advancement_title: "Başarım Kazanıldı"
+  advancement_desc: "**{player}** şu başarımı kazandı: **{advancement}**."
+
+commands:
+  player_only: "&cBu komutu sadece oyuncular kullanabilir."
+  help: "&bNexDiscordLink &7v{version} - Yapılandırmayı yenilemek için &b/nexdiscord reload &7kullanın."
+  link_usage: "Kullanım: /link"
+  link_already_linked: "&cZaten hesabınız bağlı!"
+  link_code_generated: "&aBağlantı kodunuz: &b{code}&a. Bu kodu bota DM üzerinden gönderin."
+  unlink_success: "&aHesap bağlantısı başarıyla kaldırıldı."
+  unlink_not_linked: "&cHesabınız bağlı değil!"
+  reload_success: "&aYapılandırma yeniden yüklendi."
+  no_permission: "&cBuna yetkiniz yok."
+  link_success_player: "&aDiscord hesabına başarıyla bağlandınız: &b{discord}"
+  2fa_usage: "&cKullanım: /2fa <setup|login|disable>"
+  reset_reward_success: "&b{player} &aadlı oyuncunun ödül hakkı sıfırlandı."
+  reset_reward_all_success: "&aTüm oyuncuların ödül hakları sıfırlandı."
+  player_not_found: "&cOyuncu bulunamadı."
+
+update:
+  notification:
+    - "&8&m--------------------------------------------------"
+    - "&bNexDiscordLink &7güncellemesi mevcut!"
+    - "&7Mevcut Sürüm: &c{current_version}"
+    - "&7Yeni Sürüm: &a{new_version}"
+    - "&7İndir: &b{link}"
+    - "&8&m--------------------------------------------------"
+
+link:
+  success: "**{player}** hesabına başarıyla bağlandınız!"
+  invalid_code: "Geçersiz veya süresi dolmuş kod."
+  already_linked: "Zaten bir Minecraft hesabına bağlısınız."
+
+discord:
+  modal:
+    embed:
+      title: "Hesabını Bağla"
+      description: "Minecraft hesabını Discord ile eşleştirmek için aşağıdaki butona tıkla."
+      footer: "NexDiscordLink Sistemi"
+    setup_sent: "Bağlantı mesajı gönderildi!"
+    success: "Başarıyla eşleşti!"
+    fail: "Eşleşme başarısız."
+  command:
+    no_dm: "Bu komut DM üzerinden kullanılamaz."
+    console:
+      disabled: "Konsol komutu yapılandırmada devre dışı."
+      success: "Komut yürütüldü: `{command}`"
+      fail: "Komut yürütülemedi: `{command}`"
+    profile:
+      description: "Bağlı profilinizi görüntüleyin"
+      not_linked: "Herhangi bir Minecraft hesabına bağlı değilsiniz!"
+      embed:
+        title: "Oyuncu Profili"
+        field_player: "Oyuncu"
+        field_uuid: "UUID"
+        field_status: "Durum"
+        status_online: "Çevrimiçi"
+        status_offline: "Çevrimdışı"
