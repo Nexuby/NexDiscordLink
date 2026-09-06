@@ -1,5 +1,7 @@
 # NexDiscordLink
 
+[![Build](https://github.com/Nexuby/NexDiscordLink/actions/workflows/build.yml/badge.svg)](https://github.com/Nexuby/NexDiscordLink/actions/workflows/build.yml)
+
 NexDiscordLink is a Discord–Minecraft bridge for Spigot and Paper servers. It combines account linking, Discord role and nickname synchronization, login verification, chat bridging, event logging, and configurable rewards in one plugin.
 
 ## Features
@@ -51,6 +53,12 @@ The shaded plugin artifact is generated at `build/libs/NexDiscordLink-<version>.
 
 Never commit a live bot token, database password, webhook URL, or generated runtime configuration. The configuration under `src/main/resources` contains distributable defaults only.
 
+### Sensitive data protection
+
+NexDiscordLink encrypts TOTP secrets with AES-GCM and stores IP addresses as keyed, non-reversible fingerprints. On first startup it creates `plugins/NexDiscordLink/secret.key`. Back up this file securely: losing or replacing it makes existing encrypted TOTP secrets unreadable.
+
+For managed deployments, provide a Base64-encoded 32-byte key through the `NEXDISCORDLINK_MASTER_KEY` environment variable instead of relying on the generated key file. Never commit either form of the key.
+
 ## Commands
 
 ### Minecraft
@@ -74,6 +82,8 @@ Never commit a live bot token, database password, webhook URL, or generated runt
 | `/console <command>` | Execute a server command when explicitly enabled. |
 
 The Discord console command grants full server-console access. Keep it disabled unless it is intentionally required and Discord administrator access is tightly controlled.
+
+When enabled, `console-command.whitelist` is mandatory. Only the root commands listed there can execute; an empty list denies every command.
 
 ## Configuration
 

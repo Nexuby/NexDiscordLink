@@ -23,7 +23,7 @@ public class ResetRewardCommand implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            sender.sendMessage("Usage: /nexdiscord resetreward <player|all>");
+            plugin.getLanguageManager().sendMessage(sender, "commands.reset_reward_usage");
             return true;
         }
 

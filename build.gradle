@@ -34,6 +34,9 @@ dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.53.2.1'
     implementation 'com.mysql:mysql-connector-j:9.4.0'
     implementation 'org.bstats:bstats-bukkit:3.0.2'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
 }
 
 def targetJavaVersion = 17
@@ -51,6 +54,10 @@ tasks.withType(JavaCompile).configureEach {
         options.release = targetJavaVersion
     }
     options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 processResources {

@@ -28,6 +28,7 @@ database-settings:
 
 channels:
   log-channel-id: "123456789012345678"
+  console-channel-id: "" # Optional fallback when console-webhook-url is empty
   console-webhook-url: "" # Optional: Use Webhook for console logs (Faster & Works during startup)
 
 rewards:

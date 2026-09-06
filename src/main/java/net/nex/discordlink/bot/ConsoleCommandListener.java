@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
-import java.util.Locale;
+import java.util.Optional;
 
 public class ConsoleCommandListener extends ListenerAdapter {
 
@@ -38,18 +38,18 @@ public class ConsoleCommandListener extends ListenerAdapter {
                 return;
             }
 
-            String command = event.getOption("command").getAsString().trim();
-            if (command.startsWith("/") || command.contains("\n") || command.contains("\r")) {
+            Optional<ConsoleCommandPolicy.ParsedCommand> parsed = ConsoleCommandPolicy.parse(
+                    event.getOption("command").getAsString()
+            );
+            if (parsed.isEmpty()) {
                 event.reply(plugin.getLanguageManager().getMessage("discord.command.console.invalid")).setEphemeral(true).queue();
                 return;
             }
 
-            String commandName = command.split("\\s+", 2)[0].toLowerCase(Locale.ROOT);
+            String command = parsed.get().command();
+            String commandName = parsed.get().commandName();
             List<String> whitelist = plugin.getConfig().getStringList("console-command.whitelist");
-            boolean allowed = whitelist.stream()
-                    .map(entry -> entry.toLowerCase(Locale.ROOT).trim())
-                    .anyMatch(entry -> entry.equals(commandName));
-            if (!allowed) {
+            if (!ConsoleCommandPolicy.isAllowed(commandName, whitelist)) {
                 event.reply(plugin.getLanguageManager().getMessage("discord.command.console.not_allowed")).setEphemeral(true).queue();
                 return;
             }

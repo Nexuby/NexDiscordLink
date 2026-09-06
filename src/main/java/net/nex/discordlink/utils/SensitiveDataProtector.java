@@ -36,6 +36,13 @@ public class SensitiveDataProtector {
         }
     }
 
+    SensitiveDataProtector(byte[] key) {
+        if (key == null || key.length != KEY_BYTES) {
+            throw new IllegalArgumentException("Encryption key must be exactly " + KEY_BYTES + " bytes");
+        }
+        this.encryptionKey = new SecretKeySpec(key.clone(), "AES");
+    }
+
     public String encrypt(String plaintext) {
         try {
             byte[] nonce = new byte[GCM_NONCE_BYTES];

@@ -83,6 +83,7 @@ commands:
   link_success_player: "&aSuccessfully linked to Discord account: &b{discord}"
   2fa_usage: "&cUsage: /2fa <setup|login|disable>"
   reset_reward_success: "&aSuccessfully reset link reward count for &b{player}&a."
+  reset_reward_usage: "&cUsage: /nexdiscord resetreward <player|all>"
   reset_reward_all_success: "&aSuccessfully reset link reward count for &ball players&a."
   player_not_found: "&cPlayer not found."
 

@@ -83,6 +83,7 @@ commands:
   link_success_player: "&aDiscord hesabına başarıyla bağlandınız: &b{discord}"
   2fa_usage: "&cKullanım: /2fa <setup|login|disable>"
   reset_reward_success: "&b{player} &aadlı oyuncunun ödül hakkı sıfırlandı."
+  reset_reward_usage: "&cKullanım: /nexdiscord resetreward <oyuncu|all>"
   reset_reward_all_success: "&aTüm oyuncuların ödül hakları sıfırlandı."
   player_not_found: "&cOyuncu bulunamadı."
 
