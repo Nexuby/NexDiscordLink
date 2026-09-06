@@ -14,6 +14,9 @@ public final class CommandAliases {
     private static final Set<String> STATUS = Set.of(
             "status", "durum", "kontrol"
     );
+    private static final Set<String> SYNC = Set.of(
+            "sync", "senkronize", "esitle", "eşitle"
+    );
     private static final Set<String> TWO_FACTOR_COMMANDS = Set.of(
             "2fa", "ikifaktor", "ikifaktör", "ikiasamali", "ikiaşamalı"
     );
@@ -40,6 +43,10 @@ public final class CommandAliases {
 
     public static boolean isStatus(String value) {
         return STATUS.contains(normalize(value));
+    }
+
+    public static boolean isSync(String value) {
+        return SYNC.contains(normalize(value));
     }
 
     public static TwoFactorAction getTwoFactorAction(String value) {

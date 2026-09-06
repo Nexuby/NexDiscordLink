@@ -73,6 +73,7 @@ For managed deployments, provide a Base64-encoded 32-byte key through the `NEXDI
 | `/2fa disable <code>` | `/ikifaktör kapat <code>`, `/ikifaktor kapat <code>` | Disable TOTP after verification. |
 | `/nexdiscord reload` | `/discordyönet yenile`, `/discordyonet yenile` | Reload configuration, database, scheduler, and Discord bot. |
 | `/nexdiscord status` | `/discordyönet durum`, `/discordyonet kontrol` | Check database, Discord bot, guild, and security health. |
+| `/nexdiscord sync [player\|all]` | `/discordyönet senkronize [oyuncu\|tümü]` | Start role synchronization immediately. |
 | `/nexdiscord resetreward <player\|all>` | `/discordyönet ödülsıfırla <oyuncu\|all>` | Reset link-reward counters. |
 
 ### Discord

@@ -40,6 +40,8 @@ class CommandAliasesTest {
         assertTrue(CommandAliases.isResetReward("odulsifirla"));
         assertTrue(CommandAliases.isStatus("durum"));
         assertTrue(CommandAliases.isStatus("kontrol"));
+        assertTrue(CommandAliases.isSync("senkronize"));
+        assertTrue(CommandAliases.isSync("eşitle"));
     }
 
     @Test

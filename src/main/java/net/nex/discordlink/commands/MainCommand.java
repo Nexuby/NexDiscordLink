@@ -12,11 +12,13 @@ public class MainCommand implements CommandExecutor {
     private final NexDiscordLink plugin;
     private final ResetRewardCommand resetRewardCommand;
     private final StatusCommand statusCommand;
+    private final SyncRolesCommand syncRolesCommand;
 
     public MainCommand(NexDiscordLink plugin) {
         this.plugin = plugin;
         this.resetRewardCommand = new ResetRewardCommand(plugin);
         this.statusCommand = new StatusCommand(plugin);
+        this.syncRolesCommand = new SyncRolesCommand(plugin);
     }
 
     @Override
@@ -41,6 +43,12 @@ public class MainCommand implements CommandExecutor {
 
             if (CommandAliases.isStatus(args[0])) {
                 return statusCommand.execute(sender);
+            }
+
+            if (CommandAliases.isSync(args[0])) {
+                String[] subArgs = new String[args.length - 1];
+                System.arraycopy(args, 1, subArgs, 0, args.length - 1);
+                return syncRolesCommand.execute(sender, subArgs);
             }
         }
 

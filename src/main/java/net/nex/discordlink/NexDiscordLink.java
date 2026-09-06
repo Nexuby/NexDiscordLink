@@ -22,6 +22,7 @@ public class NexDiscordLink extends JavaPlugin {
     private net.nex.discordlink.utils.ConsoleAppender consoleAppender;
     private net.nex.discordlink.utils.AuditLogger auditLogger;
     private BukkitTask rewardTask;
+    private BukkitTask roleSyncTask;
     private int botGeneration;
 
     @Override
@@ -80,6 +81,7 @@ public class NexDiscordLink extends JavaPlugin {
         getCommand("linkstatus").setExecutor(new net.nex.discordlink.commands.AccountStatusCommand(this));
 
         scheduleRewards();
+        scheduleRoleSync();
 
         // Initialize bStats
         int pluginId = 28456; // Replace with your own plugin ID
@@ -142,6 +144,7 @@ public class NexDiscordLink extends JavaPlugin {
         }
 
         scheduleRewards();
+        scheduleRoleSync();
         startDiscordBot(sender, true);
     }
 
@@ -154,6 +157,24 @@ public class NexDiscordLink extends JavaPlugin {
         long interval = minutes * 20L * 60L;
         rewardTask = new net.nex.discordlink.utils.RewardScheduler(this)
                 .runTaskTimer(this, interval, interval);
+    }
+
+    private void scheduleRoleSync() {
+        if (roleSyncTask != null) {
+            roleSyncTask.cancel();
+        }
+        if (!getConfig().getBoolean("sync.role-sync.enabled", false)) {
+            roleSyncTask = null;
+            return;
+        }
+
+        long minutes = Math.max(1L, getConfig().getLong("sync.role-sync.interval-minutes", 5L));
+        long interval = minutes * 20L * 60L;
+        roleSyncTask = getServer().getScheduler().runTaskTimer(this, () -> {
+            for (org.bukkit.entity.Player player : getServer().getOnlinePlayers()) {
+                roleManager.syncPlayerRole(player);
+            }
+        }, interval, interval);
     }
 
     private void startDiscordBot(CommandSender reloadSender, boolean reload) {
@@ -185,6 +206,10 @@ public class NexDiscordLink extends JavaPlugin {
         if (rewardTask != null) {
             rewardTask.cancel();
             rewardTask = null;
+        }
+        if (roleSyncTask != null) {
+            roleSyncTask.cancel();
+            roleSyncTask = null;
         }
         if (consoleAppender != null) {
             consoleAppender.unregister();

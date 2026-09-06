@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static net.nex.discordlink.utils.AuditLogger.AuditEvent.ROLE_SYNC;
+
 public class RoleManager {
 
     private final NexDiscordLink plugin;
@@ -77,12 +79,15 @@ public class RoleManager {
                 }
 
                 final String group = primaryGroup;
+                final SyncDirection direction = SyncDirection.fromConfig(
+                        plugin.getConfig().getString("sync.role-sync.direction", "MINECRAFT_TO_DISCORD")
+                );
 
                 // Now do Discord API calls async
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     for (Guild guild : plugin.getDiscordBot().getJda().getGuilds()) {
                         guild.retrieveMemberById(discordId).queue(
-                            member -> applyRoles(guild, member, group),
+                            member -> synchronize(guild, member, player, group, direction),
                             error -> {
                                 // Member not found in this guild, ignore
                             }
@@ -90,6 +95,60 @@ public class RoleManager {
                     }
                 });
             });
+        });
+    }
+
+    private void synchronize(Guild guild, Member member, Player player, String primaryGroup, SyncDirection direction) {
+        String discordGroup = findDiscordGroup(member);
+
+        if (direction == SyncDirection.DISCORD_TO_MINECRAFT) {
+            if (discordGroup != null) syncVaultGroup(player, discordGroup);
+            return;
+        }
+
+        if (direction == SyncDirection.BIDIRECTIONAL && discordGroup != null) {
+            // A configured Discord role is authoritative when both sides differ.
+            syncVaultGroup(player, discordGroup);
+            return;
+        }
+
+        applyRoles(guild, member, primaryGroup);
+    }
+
+    private String findDiscordGroup(Member member) {
+        ConfigurationSection section = plugin.getConfig().getConfigurationSection("sync.role-sync.vault-groups");
+        if (section == null) return null;
+
+        Set<String> memberRoleIds = new HashSet<>();
+        for (Role role : member.getRoles()) {
+            memberRoleIds.add(role.getId());
+        }
+        for (String group : section.getKeys(false)) {
+            String roleId = section.getString(group);
+            if (roleId != null && memberRoleIds.contains(roleId)) return group;
+        }
+        return null;
+    }
+
+    private void syncVaultGroup(Player player, String targetGroup) {
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (permission == null || !player.isOnline()) return;
+            ConfigurationSection section = plugin.getConfig().getConfigurationSection("sync.role-sync.vault-groups");
+            if (section == null || !section.contains(targetGroup)) return;
+
+            boolean changed = false;
+            for (String managedGroup : section.getKeys(false)) {
+                if (managedGroup.equalsIgnoreCase(targetGroup)) continue;
+                if (permission.playerInGroup(null, player, managedGroup)) {
+                    changed |= permission.playerRemoveGroup(null, player, managedGroup);
+                }
+            }
+            if (!permission.playerInGroup(null, player, targetGroup)) {
+                changed |= permission.playerAddGroup(null, player, targetGroup);
+            }
+            if (changed) {
+                plugin.getAuditLogger().log(ROLE_SYNC, player.getName(), "Discord -> Vault: " + targetGroup);
+            }
         });
     }
 
@@ -154,9 +213,28 @@ public class RoleManager {
         // Apply all changes in a single request to avoid race conditions
         if (!rolesToAdd.isEmpty() || !rolesToRemove.isEmpty()) {
             guild.modifyMemberRoles(member, rolesToAdd, rolesToRemove).queue(
-                success -> {},
+                success -> plugin.getAuditLogger().log(
+                        ROLE_SYNC,
+                        member.getEffectiveName(),
+                        "Vault -> Discord: added=" + rolesToAdd.size() + ", removed=" + rolesToRemove.size()
+                ),
                 error -> plugin.getLogger().warning("Failed to modify roles for " + member.getEffectiveName() + ": " + error.getMessage())
             );
+        }
+    }
+
+    private enum SyncDirection {
+        MINECRAFT_TO_DISCORD,
+        DISCORD_TO_MINECRAFT,
+        BIDIRECTIONAL;
+
+        private static SyncDirection fromConfig(String value) {
+            if (value == null) return MINECRAFT_TO_DISCORD;
+            try {
+                return valueOf(value.trim().toUpperCase(java.util.Locale.ROOT));
+            } catch (IllegalArgumentException ignored) {
+                return MINECRAFT_TO_DISCORD;
+            }
         }
     }
 

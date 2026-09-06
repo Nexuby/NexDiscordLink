@@ -103,6 +103,8 @@ commands:
   reset_reward_usage: "&cKullanım: /nexdiscord resetreward <oyuncu|all>"
   reset_reward_all_success: "&aTüm oyuncuların ödül hakları sıfırlandı."
   player_not_found: "&cOyuncu bulunamadı."
+  role_sync_all: "&a{count} çevrimiçi oyuncu için rol senkronizasyonu başlatıldı."
+  role_sync_player: "&a{player} için rol senkronizasyonu başlatıldı."
   status_unknown: "Bilinmiyor"
   status_enabled: "&aEtkin"
   status_disabled: "&cKapalı"

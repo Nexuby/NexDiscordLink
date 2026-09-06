@@ -82,6 +82,8 @@ sync:
     role-id: "YOUR_LINKED_ROLE_ID"
   role-sync:
     enabled: true
+    direction: "MINECRAFT_TO_DISCORD" # MINECRAFT_TO_DISCORD, DISCORD_TO_MINECRAFT, BIDIRECTIONAL
+    interval-minutes: 5
     vault-groups:
       vip: "123456789012345678"
       mvp: "123456789012345678"
