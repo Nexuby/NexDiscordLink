@@ -12,7 +12,6 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
-import org.bukkit.map.MinecraftFont;
 
 import java.awt.image.BufferedImage;
 
@@ -58,7 +57,6 @@ public class QRMapManager {
 
             // Draw the image centered (128x128 on a 128x128 map)
             canvas.drawImage(0, 0, image);
-            canvas.drawText(5, 5, MinecraftFont.Font, "Scan with App");
             rendered = true;
         }
     }

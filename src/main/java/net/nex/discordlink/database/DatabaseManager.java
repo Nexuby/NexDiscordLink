@@ -20,7 +20,7 @@ public interface DatabaseManager {
     void resetAllLinkRewardCounts();
 
     // 2FA Methods
-    void set2FASecret(UUID uuid, String secret);
+    boolean set2FASecret(UUID uuid, String secret);
     String get2FASecret(UUID uuid);
-    void remove2FASecret(UUID uuid);
+    boolean remove2FASecret(UUID uuid);
 }

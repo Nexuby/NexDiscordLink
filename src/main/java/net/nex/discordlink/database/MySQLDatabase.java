@@ -61,8 +61,8 @@ public class MySQLDatabase implements DatabaseManager {
         String queryLink = "CREATE TABLE IF NOT EXISTS nex_discord_link (" +
                 "uuid VARCHAR(36) PRIMARY KEY, " +
                 "discord_id VARCHAR(20) NOT NULL, " +
-                "ip_address VARCHAR(45), " +
-                "secret_key VARCHAR(32)" +
+                "ip_address VARCHAR(64), " +
+                "secret_key TEXT" +
                 ");";
 
         String queryRewards = "CREATE TABLE IF NOT EXISTS nex_reward_history (" +
@@ -91,6 +91,11 @@ public class MySQLDatabase implements DatabaseManager {
                 ps.execute();
             } catch (SQLException ignored) {
                 // Column likely already exists
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "ALTER TABLE nex_discord_link MODIFY COLUMN ip_address VARCHAR(64), MODIFY COLUMN secret_key TEXT")) {
+                ps.execute();
             }
             return true;
         } catch (SQLException e) {
@@ -268,15 +273,16 @@ public class MySQLDatabase implements DatabaseManager {
     }
 
     @Override
-    public void set2FASecret(UUID uuid, String secret) {
+    public boolean set2FASecret(UUID uuid, String secret) {
         String query = "UPDATE nex_discord_link SET secret_key = ? WHERE uuid = ?";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, secret);
             ps.setString(2, uuid.toString());
-            ps.executeUpdate();
+            return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -298,7 +304,7 @@ public class MySQLDatabase implements DatabaseManager {
     }
 
     @Override
-    public void remove2FASecret(UUID uuid) {
-        set2FASecret(uuid, null);
+    public boolean remove2FASecret(UUID uuid) {
+        return set2FASecret(uuid, null);
     }
 }

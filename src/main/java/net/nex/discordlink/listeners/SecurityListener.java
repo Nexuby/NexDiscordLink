@@ -56,9 +56,9 @@ public class SecurityListener implements Listener {
 
         if (storedIp == null) {
             // First time login after link or IP not saved yet
-            plugin.getDatabaseManager().updateIpAddress(player.getUniqueId(), currentIp);
+            plugin.getDatabaseManager().updateIpAddress(player.getUniqueId(), securityManager.protectIp(currentIp));
             // Continue to check 2FA...
-        } else if (!storedIp.equals(currentIp)) {
+        } else if (!securityManager.matchesIp(storedIp, currentIp)) {
             // IP Mismatch! Freeze player and send DM
             String verificationToken = securityManager.beginVerification(player, discordId, currentIp);
 
@@ -85,6 +85,9 @@ public class SecurityListener implements Listener {
             } else {
                 handleDiscordDeliveryFailure(player.getUniqueId(), verificationToken);
             }
+        } else if (!securityManager.isProtectedIp(storedIp)) {
+            // Transparently migrate legacy plaintext IP values.
+            plugin.getDatabaseManager().updateIpAddress(player.getUniqueId(), securityManager.protectIp(currentIp));
         }
 
         // Check 2FA

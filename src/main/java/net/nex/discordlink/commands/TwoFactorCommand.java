@@ -1,7 +1,7 @@
 package net.nex.discordlink.commands;
 
-import com.warrenstrange.googleauth.GoogleAuthenticator;
 import net.nex.discordlink.NexDiscordLink;
+import net.nex.discordlink.utils.TwoFactorManager.VerificationResult;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -76,13 +76,13 @@ public class TwoFactorCommand implements CommandExecutor {
                 return true;
             }
 
-            // Check if verifying setup or login
-            if (plugin.getTwoFactorManager().verifySetup(player, code)) {
-                plugin.getLanguageManager().sendMessage(player, "security.2fa_setup_success");
-            } else if (plugin.getTwoFactorManager().verifyLogin(player, code)) {
-                // Message sent in verifyLogin
+            VerificationResult result;
+            if (plugin.getTwoFactorManager().hasPendingSetup(player.getUniqueId())) {
+                result = plugin.getTwoFactorManager().verifySetup(player, code);
+                sendVerificationResult(player, result, true);
             } else {
-                plugin.getLanguageManager().sendMessage(player, "security.invalid_code");
+                result = plugin.getTwoFactorManager().verifyLogin(player, code);
+                sendVerificationResult(player, result, false);
             }
             return true;
         }
@@ -107,20 +107,34 @@ public class TwoFactorCommand implements CommandExecutor {
                 return true;
             }
 
-            // Verify code against stored secret
-            GoogleAuthenticator gAuth = new GoogleAuthenticator();
-            String secret = plugin.getDatabaseManager().get2FASecret(player.getUniqueId());
-
-            if (gAuth.authorize(secret, code)) {
-                plugin.getTwoFactorManager().remove2FA(player.getUniqueId());
-                plugin.getLanguageManager().sendMessage(player, "security.2fa_disabled");
+            VerificationResult result = plugin.getTwoFactorManager().verifyStoredCode(player.getUniqueId(), code);
+            if (result == VerificationResult.SUCCESS) {
+                if (plugin.getTwoFactorManager().remove2FA(player.getUniqueId())) {
+                    plugin.getLanguageManager().sendMessage(player, "security.2fa_disabled");
+                } else {
+                    plugin.getLanguageManager().sendMessage(player, "security.2fa_storage_error");
+                }
             } else {
-                plugin.getLanguageManager().sendMessage(player, "security.invalid_code");
+                sendVerificationResult(player, result, false);
             }
             return true;
         }
 
         plugin.getLanguageManager().sendMessage(player, "commands.2fa_usage");
         return true;
+    }
+
+    private void sendVerificationResult(Player player, VerificationResult result, boolean setup) {
+        switch (result) {
+            case SUCCESS -> plugin.getLanguageManager().sendMessage(
+                    player,
+                    setup ? "security.2fa_setup_success" : "security.2fa_verified"
+            );
+            case RATE_LIMITED -> plugin.getLanguageManager().sendMessage(player, "security.2fa_rate_limited");
+            case EXPIRED -> plugin.getLanguageManager().sendMessage(player, "security.2fa_setup_expired");
+            case STORAGE_ERROR -> plugin.getLanguageManager().sendMessage(player, "security.2fa_storage_error");
+            case NOT_CONFIGURED -> plugin.getLanguageManager().sendMessage(player, "security.2fa_not_setup");
+            case INVALID -> plugin.getLanguageManager().sendMessage(player, "security.invalid_code");
+        }
     }
 }

@@ -16,6 +16,7 @@ public class NexDiscordLink extends JavaPlugin {
     private net.nex.discordlink.utils.LinkManager linkManager;
     private net.nex.discordlink.utils.RoleManager roleManager;
     private net.nex.discordlink.utils.TwoFactorManager twoFactorManager;
+    private net.nex.discordlink.utils.SensitiveDataProtector sensitiveDataProtector;
     private net.nex.discordlink.utils.ConsoleAppender consoleAppender;
 
     @Override
@@ -39,11 +40,20 @@ public class NexDiscordLink extends JavaPlugin {
         }
 
         // Initialize Managers
-        this.securityManager = new net.nex.discordlink.utils.SecurityManager(this);
+        try {
+            this.sensitiveDataProtector = new net.nex.discordlink.utils.SensitiveDataProtector(this);
+        } catch (IllegalStateException exception) {
+            getLogger().severe(exception.getMessage());
+            languageManager.sendConsoleMessage("console.security_storage_fatal");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        this.securityManager = new net.nex.discordlink.utils.SecurityManager(this, sensitiveDataProtector);
         this.syncManager = new net.nex.discordlink.utils.SyncManager(this);
         this.linkManager = new net.nex.discordlink.utils.LinkManager(this);
         this.roleManager = new net.nex.discordlink.utils.RoleManager(this);
-        this.twoFactorManager = new net.nex.discordlink.utils.TwoFactorManager(this);
+        this.twoFactorManager = new net.nex.discordlink.utils.TwoFactorManager(this, sensitiveDataProtector);
 
         // Initialize Console Appender
         this.consoleAppender = new net.nex.discordlink.utils.ConsoleAppender(this);

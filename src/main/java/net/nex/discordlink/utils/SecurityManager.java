@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SecurityManager {
 
     private final NexDiscordLink plugin;
+    private final SensitiveDataProtector dataProtector;
     private final Set<UUID> frozenPlayers;
     private final Map<UUID, VerificationSession> verificationSessions;
     private final SecureRandom secureRandom;
@@ -23,8 +24,9 @@ public class SecurityManager {
     private static final long VERIFICATION_TIMEOUT_TICKS = 20L * 60L * 5L;
     private static final long VERIFICATION_TIMEOUT_MILLIS = Duration.ofMinutes(5).toMillis();
 
-    public SecurityManager(NexDiscordLink plugin) {
+    public SecurityManager(NexDiscordLink plugin, SensitiveDataProtector dataProtector) {
         this.plugin = plugin;
+        this.dataProtector = dataProtector;
         this.frozenPlayers = ConcurrentHashMap.newKeySet();
         this.verificationSessions = new ConcurrentHashMap<>();
         this.secureRandom = new SecureRandom();
@@ -83,6 +85,18 @@ public class SecurityManager {
 
     public boolean isFrozen(Player player) {
         return frozenPlayers.contains(player.getUniqueId());
+    }
+
+    public String protectIp(String ipAddress) {
+        return dataProtector.fingerprintIp(ipAddress);
+    }
+
+    public boolean matchesIp(String storedValue, String ipAddress) {
+        return dataProtector.matchesIp(storedValue, ipAddress);
+    }
+
+    public boolean isProtectedIp(String storedValue) {
+        return dataProtector.isIpFingerprint(storedValue);
     }
 
     public void removePlayer(Player player) {

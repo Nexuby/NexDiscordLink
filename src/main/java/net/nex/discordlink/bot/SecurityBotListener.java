@@ -55,7 +55,7 @@ public class SecurityBotListener extends ListenerAdapter {
             return;
         }
 
-        if (!plugin.getDatabaseManager().updateIpAddress(uuid, currentIp)) {
+        if (!plugin.getDatabaseManager().updateIpAddress(uuid, plugin.getSecurityManager().protectIp(currentIp))) {
             event.getHook().sendMessage(plugin.getLanguageManager().getMessage("security.verification_save_failed")).queue();
             return;
         }
