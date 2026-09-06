@@ -8,7 +8,7 @@ public interface DatabaseManager {
     boolean ping();
 
     boolean createPlayer(UUID uuid, String discordId);
-    void removePlayer(UUID uuid);
+    boolean removePlayer(UUID uuid);
     String getDiscordId(UUID uuid);
     long getLinkedAt(UUID uuid);
     UUID getPlayerUUID(String discordId);

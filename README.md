@@ -99,6 +99,8 @@ The main configuration is distributed from `src/main/resources/config.yml`. Loca
 
 Account links, unlinks, 2FA changes, IP-verification outcomes, and administrator actions can be sent to the configured audit channel. Audit output automatically redacts named secrets, tokens, keys, and IPv4 addresses.
 
+Minecraft-side unlink requests require the player's TOTP code when 2FA is enabled. Without 2FA, a single-use approval button is sent to the linked Discord account and expires after two minutes. The default `ONE_TO_ONE` account policy prevents either account from being linked more than once.
+
 Supported link modes:
 
 - `DM`

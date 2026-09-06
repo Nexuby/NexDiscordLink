@@ -143,14 +143,15 @@ public class SQLiteDatabase implements DatabaseManager {
     }
 
     @Override
-    public void removePlayer(UUID uuid) {
+    public boolean removePlayer(UUID uuid) {
         String query = "DELETE FROM nex_discord_link WHERE uuid = ?";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, uuid.toString());
-            ps.executeUpdate();
+            return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

@@ -45,6 +45,11 @@ security:
   2fa_disabled: "&a2FA devre dışı bırakıldı."
   2fa_disable_usage: "&cKullanım: /2fa disable <kod>"
   invalid_code: "&cGeçersiz kod. Lütfen tekrar deneyin."
+  unlink_dm_request: "Minecraft hesap eşlemeni kaldırmak için aşağıdaki düğmeyle işlemi onayla. Bu istek 2 dakika geçerlidir."
+  unlink_dm_button: "Eşlemeyi Kaldır"
+  unlink_dm_failed: "&cDiscord onayı gönderilemedi. Eşleme güvenlik amacıyla kaldırılmadı."
+  unlink_confirmation_invalid: "Bu eşleme kaldırma isteği geçersiz, süresi dolmuş veya başka bir hesaba ait."
+  unlink_confirmed: "Minecraft hesap eşlemen güvenli şekilde kaldırıldı."
 
 rewards:
   salary_received: "&aHesabınız bağlı olduğu için maaşınızı aldınız!"
@@ -92,6 +97,9 @@ commands:
   link_code_generated_modal: "&aBağlantı kodunuz: &b{code}&a. Kodu Discord bağlantı penceresine girin."
   link_code_generated_both: "&aBağlantı kodunuz: &b{code}&a. Kodu bota DM üzerinden gönderin veya Discord bağlantı penceresine girin."
   unlink_success: "&aHesap bağlantısı başarıyla kaldırıldı."
+  unlink_failed: "&cHesap bağlantısı kaldırılamadı. Lütfen tekrar deneyin."
+  unlink_2fa_required: "&eEşlemeyi kaldırmak için &b/eşlemesil <2FA kodu> &ekomutunu kullanın."
+  unlink_confirmation_sent: "&eEşleme kaldırma onayı bağlı Discord hesabınıza gönderildi."
   unlink_not_linked: "&cHesabınız bağlı değil!"
   reload_success: "&aYapılandırma yeniden yüklendi."
   reload_started: "&eYapılandırma, veritabanı, ödül zamanlayıcısı ve Discord botu yeniden yükleniyor..."
@@ -164,6 +172,7 @@ discord:
     unlink:
       description: "Minecraft hesap eşlemesini kaldır"
       success: "Minecraft hesap eşlemen kaldırıldı."
+      failed: "Minecraft hesap eşlemesi kaldırılamadı. Lütfen tekrar deneyin."
     help:
       description: "NexDiscordLink komutlarını göster"
       content: "**NexDiscordLink**\n`/eşle kod:<kod>` — hesabını eşleştir\n`/hesap` — eşlenen profili göster\n`/eşlemeyi-kaldır` — eşlemeyi kaldır\n`/yardım` — bu mesajı göster"

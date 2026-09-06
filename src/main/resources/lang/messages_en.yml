@@ -45,6 +45,11 @@ security:
   2fa_disabled: "&a2FA has been disabled."
   2fa_disable_usage: "&cUsage: /2fa disable <code>"
   invalid_code: "&cInvalid code. Please try again."
+  unlink_dm_request: "Confirm below to remove your Minecraft account link. This request is valid for 2 minutes."
+  unlink_dm_button: "Remove Account Link"
+  unlink_dm_failed: "&cDiscord approval could not be delivered. The link was kept for your security."
+  unlink_confirmation_invalid: "This unlink request is invalid, expired, or belongs to another account."
+  unlink_confirmed: "Your Minecraft account link was securely removed."
 
 rewards:
   salary_received: "&aYou received your salary for being linked!"
@@ -92,6 +97,9 @@ commands:
   link_code_generated_modal: "&aYour link code is: &b{code}&a. Enter it in the Discord link modal."
   link_code_generated_both: "&aYour link code is: &b{code}&a. Send it to the bot via DM or enter it in the Discord link modal."
   unlink_success: "&aSuccessfully unlinked your account."
+  unlink_failed: "&cThe account link could not be removed. Please try again."
+  unlink_2fa_required: "&eUse &b/unlink <2FA code> &eto remove your account link."
+  unlink_confirmation_sent: "&eAn unlink approval was sent to your linked Discord account."
   unlink_not_linked: "&cYou are not linked!"
   reload_success: "&aConfiguration reloaded."
   reload_started: "&eReloading configuration, database, reward scheduler, and Discord bot..."
@@ -164,6 +172,7 @@ discord:
     unlink:
       description: "Remove your Minecraft account link"
       success: "Your Minecraft account link has been removed."
+      failed: "The Minecraft account link could not be removed. Please try again."
     help:
       description: "Show NexDiscordLink commands"
       content: "**NexDiscordLink**\n`/link code:<code>` — link your account\n`/profile` — show the linked profile\n`/unlink` — remove the link\n`/help` — show this message"

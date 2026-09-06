@@ -65,6 +65,7 @@ rewards:
 
 link-system:
   type: "BOTH" # Options: DM, MODAL, BOTH
+  account-policy: "ONE_TO_ONE" # One Minecraft account per Discord account and vice versa
   modal:
     channel-id: "YOUR_LINK_CHANNEL_ID"
     button-label: "Link Account"
@@ -72,6 +73,9 @@ link-system:
     modal-title: "Link Your Account"
     input-label: "Link Code"
     input-placeholder: "Enter your 4-digit code"
+
+unlink-security:
+  require-confirmation: true # Uses 2FA when enabled, otherwise sends a Discord DM approval
 
 security-settings:
   enabled: true

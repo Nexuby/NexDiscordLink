@@ -41,6 +41,37 @@ public class SecurityBotListener extends ListenerAdapter {
             String discordId = event.getUser().getId();
             event.deferReply(true).queue();
             Bukkit.getScheduler().runTask(plugin, () -> verifyOnMainThread(event, uuid, discordId, token));
+            return;
+        }
+
+        if (event.getComponentId().startsWith("confirm_unlink:")) {
+            String[] parts = event.getComponentId().split(":", 3);
+            if (parts.length != 3) {
+                event.reply(plugin.getLanguageManager().getMessage("security.unlink_confirmation_invalid"))
+                        .setEphemeral(true).queue();
+                return;
+            }
+            UUID uuid;
+            try {
+                uuid = UUID.fromString(parts[1]);
+            } catch (IllegalArgumentException exception) {
+                event.reply(plugin.getLanguageManager().getMessage("security.unlink_confirmation_invalid"))
+                        .setEphemeral(true).queue();
+                return;
+            }
+
+            String discordId = event.getUser().getId();
+            if (!plugin.getUnlinkManager().consumeApproval(uuid, discordId, parts[2])) {
+                event.reply(plugin.getLanguageManager().getMessage("security.unlink_confirmation_invalid"))
+                        .setEphemeral(true).queue();
+                return;
+            }
+
+            event.deferReply(true).queue();
+            plugin.getUnlinkManager().performUnlink(uuid, "Discord DM confirmation", success -> {
+                String key = success ? "security.unlink_confirmed" : "discord.command.unlink.failed";
+                event.getHook().sendMessage(plugin.getLanguageManager().getMessage(key)).queue();
+            });
         }
     }
 
