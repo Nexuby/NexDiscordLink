@@ -67,10 +67,12 @@ For managed deployments, provide a Base64-encoded 32-byte key through the `NEXDI
 | --- | --- | --- |
 | `/link` | `/eşle`, `/hesapeşle`, `/esle`, `/hesapesle` | Generate a temporary account-linking code. |
 | `/unlink` | `/eşlemesil`, `/eslemesil`, `/hesapayır`, `/hesapayir` | Remove the current Discord account link. |
+| `/linkstatus` | `/eşledurum`, `/esledurum`, `/hesabım`, `/hesabim` | Show the linked Discord account, link date, and 2FA state. |
 | `/2fa setup` | `/ikifaktör kur`, `/ikifaktor kur` | Begin TOTP setup and receive a QR map. |
 | `/2fa login <code>` | `/ikifaktör giriş <code>`, `/ikifaktor giris <code>` | Complete TOTP verification after joining. |
 | `/2fa disable <code>` | `/ikifaktör kapat <code>`, `/ikifaktor kapat <code>` | Disable TOTP after verification. |
 | `/nexdiscord reload` | `/discordyönet yenile`, `/discordyonet yenile` | Reload configuration, database, scheduler, and Discord bot. |
+| `/nexdiscord status` | `/discordyönet durum`, `/discordyonet kontrol` | Check database, Discord bot, guild, and security health. |
 | `/nexdiscord resetreward <player\|all>` | `/discordyönet ödülsıfırla <oyuncu\|all>` | Reset link-reward counters. |
 
 ### Discord

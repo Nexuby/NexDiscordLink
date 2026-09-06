@@ -9,10 +9,12 @@ public class MainCommand implements CommandExecutor {
 
     private final NexDiscordLink plugin;
     private final ResetRewardCommand resetRewardCommand;
+    private final StatusCommand statusCommand;
 
     public MainCommand(NexDiscordLink plugin) {
         this.plugin = plugin;
         this.resetRewardCommand = new ResetRewardCommand(plugin);
+        this.statusCommand = new StatusCommand(plugin);
     }
 
     @Override
@@ -32,6 +34,10 @@ public class MainCommand implements CommandExecutor {
                 String[] subArgs = new String[args.length - 1];
                 System.arraycopy(args, 1, subArgs, 0, args.length - 1);
                 return resetRewardCommand.onCommand(sender, command, label, subArgs);
+            }
+
+            if (CommandAliases.isStatus(args[0])) {
+                return statusCommand.execute(sender);
             }
         }
 

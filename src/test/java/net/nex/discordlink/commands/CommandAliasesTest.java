@@ -21,11 +21,14 @@ class CommandAliasesTest {
         try (InputStream input = getClass().getResourceAsStream("/plugin.yml")) {
             PluginDescriptionFile description = new PluginDescriptionFile(input);
             Map<String, Object> linkCommand = description.getCommands().get("link");
+            Map<String, Object> statusCommand = description.getCommands().get("linkstatus");
 
             assertEquals(
                     List.of("eşle", "hesapeşle", "esle", "hesapesle"),
                     linkCommand.get("aliases")
             );
+            assertTrue(((List<?>) statusCommand.get("aliases")).contains("eşledurum"));
+            assertTrue(((List<?>) statusCommand.get("aliases")).contains("hesabım"));
         }
     }
 
@@ -35,6 +38,8 @@ class CommandAliasesTest {
         assertTrue(CommandAliases.isReload("yenidenyükle"));
         assertTrue(CommandAliases.isResetReward("ödülsıfırla"));
         assertTrue(CommandAliases.isResetReward("odulsifirla"));
+        assertTrue(CommandAliases.isStatus("durum"));
+        assertTrue(CommandAliases.isStatus("kontrol"));
     }
 
     @Test

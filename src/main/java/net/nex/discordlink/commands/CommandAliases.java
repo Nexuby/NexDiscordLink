@@ -11,6 +11,9 @@ public final class CommandAliases {
     private static final Set<String> RESET_REWARD = Set.of(
             "resetreward", "odulsifirla", "ödülsıfırla"
     );
+    private static final Set<String> STATUS = Set.of(
+            "status", "durum", "kontrol"
+    );
     private static final Set<String> TWO_FACTOR_COMMANDS = Set.of(
             "2fa", "ikifaktor", "ikifaktör", "ikiasamali", "ikiaşamalı"
     );
@@ -33,6 +36,10 @@ public final class CommandAliases {
 
     public static boolean isResetReward(String value) {
         return RESET_REWARD.contains(normalize(value));
+    }
+
+    public static boolean isStatus(String value) {
+        return STATUS.contains(normalize(value));
     }
 
     public static TwoFactorAction getTwoFactorAction(String value) {

@@ -75,6 +75,7 @@ public class NexDiscordLink extends JavaPlugin {
         getCommand("link").setExecutor(new net.nex.discordlink.commands.LinkCommand(this));
         getCommand("unlink").setExecutor(new net.nex.discordlink.commands.UnlinkCommand(this));
         getCommand("2fa").setExecutor(new net.nex.discordlink.commands.TwoFactorCommand(this));
+        getCommand("linkstatus").setExecutor(new net.nex.discordlink.commands.AccountStatusCommand(this));
 
         scheduleRewards();
 

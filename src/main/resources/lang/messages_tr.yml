@@ -86,6 +86,26 @@ commands:
   reset_reward_usage: "&cKullanım: /nexdiscord resetreward <oyuncu|all>"
   reset_reward_all_success: "&aTüm oyuncuların ödül hakları sıfırlandı."
   player_not_found: "&cOyuncu bulunamadı."
+  status_unknown: "Bilinmiyor"
+  status_enabled: "&aEtkin"
+  status_disabled: "&cKapalı"
+  status_ok: "&aHazır"
+  status_unavailable: "&cKullanılamıyor"
+  account_status:
+    - "&8&m--------------------------------"
+    - "&b&lDiscord Hesap Durumu"
+    - "&7Discord: &f{discord}"
+    - "&7Eşleme tarihi: &f{linked_at}"
+    - "&72FA: {two_factor}"
+    - "&8&m--------------------------------"
+  admin_status:
+    - "&8&m--------------------------------"
+    - "&b&lNexDiscordLink Sistem Durumu"
+    - "&7Sürüm: &f{version}"
+    - "&7Veritabanı: &f{database_type} &8- {database_status}"
+    - "&7Discord botu: {bot_status} &8(&f{guild_count} sunucu&8)"
+    - "&7Güvenli veri koruması: {security_status}"
+    - "&8&m--------------------------------"
 
 update:
   notification:

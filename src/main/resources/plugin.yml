@@ -22,6 +22,10 @@ commands:
     description: Manage 2FA settings
     usage: /2fa <setup|verify|disable>
     aliases: [ikifaktor, "ikifaktör", ikiasamali, "ikiaşamalı"]
+  linkstatus:
+    description: Show the current Discord account link status
+    usage: /linkstatus
+    aliases: ["eşledurum", esledurum, hesapdurum, "hesabım", hesabim]
 permissions:
   nexdiscord.link:
     description: Allows players to link their Minecraft and Discord accounts
@@ -31,6 +35,9 @@ permissions:
     default: true
   nexdiscord.2fa:
     description: Allows players to manage two-factor authentication
+    default: true
+  nexdiscord.status:
+    description: Allows players to view their account link status
     default: true
   nexdiscord.reload:
     description: Allows reloading NexDiscordLink configuration

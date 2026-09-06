@@ -5,10 +5,12 @@ import java.util.UUID;
 public interface DatabaseManager {
     boolean init();
     void close();
+    boolean ping();
 
     boolean createPlayer(UUID uuid, String discordId);
     void removePlayer(UUID uuid);
     String getDiscordId(UUID uuid);
+    long getLinkedAt(UUID uuid);
     UUID getPlayerUUID(String discordId);
     String getIpAddress(UUID uuid);
     boolean isLinked(UUID uuid);

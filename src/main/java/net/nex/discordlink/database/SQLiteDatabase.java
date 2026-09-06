@@ -65,7 +65,8 @@ public class SQLiteDatabase implements DatabaseManager {
                 "uuid VARCHAR(36) PRIMARY KEY, " +
                 "discord_id VARCHAR(20) NOT NULL, " +
                 "ip_address VARCHAR(64), " +
-                "secret_key TEXT" +
+                "secret_key TEXT, " +
+                "linked_at BIGINT DEFAULT 0" +
                 ");";
 
         String queryRewards = "CREATE TABLE IF NOT EXISTS nex_reward_history (" +
@@ -94,6 +95,12 @@ public class SQLiteDatabase implements DatabaseManager {
                 // Column likely already exists
             }
 
+            try (PreparedStatement ps = conn.prepareStatement("ALTER TABLE nex_discord_link ADD COLUMN linked_at BIGINT DEFAULT 0")) {
+                ps.execute();
+            } catch (SQLException ignored) {
+                // Column likely already exists
+            }
+
             return true;
         } catch (SQLException e) {
             plugin.getLanguageManager().sendConsoleMessage("console.database_error");
@@ -110,12 +117,24 @@ public class SQLiteDatabase implements DatabaseManager {
     }
 
     @Override
+    public boolean ping() {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT 1");
+             ResultSet ignored = ps.executeQuery()) {
+            return true;
+        } catch (SQLException | RuntimeException exception) {
+            return false;
+        }
+    }
+
+    @Override
     public boolean createPlayer(UUID uuid, String discordId) {
-        String query = "INSERT INTO nex_discord_link (uuid, discord_id) VALUES (?, ?)";
+        String query = "INSERT INTO nex_discord_link (uuid, discord_id, linked_at) VALUES (?, ?, ?)";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setString(1, uuid.toString());
             ps.setString(2, discordId);
+            ps.setLong(3, System.currentTimeMillis());
             return ps.executeUpdate() == 1;
         } catch (SQLException e) {
             plugin.getLogger().warning("Could not create account link: " + e.getMessage());
@@ -150,6 +169,21 @@ public class SQLiteDatabase implements DatabaseManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public long getLinkedAt(UUID uuid) {
+        String query = "SELECT linked_at FROM nex_discord_link WHERE uuid = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, uuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getLong("linked_at") : 0L;
+            }
+        } catch (SQLException exception) {
+            plugin.getLogger().warning("Could not read account link timestamp: " + exception.getMessage());
+            return 0L;
+        }
     }
 
     @Override

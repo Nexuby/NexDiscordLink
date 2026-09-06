@@ -86,6 +86,26 @@ commands:
   reset_reward_usage: "&cUsage: /nexdiscord resetreward <player|all>"
   reset_reward_all_success: "&aSuccessfully reset link reward count for &ball players&a."
   player_not_found: "&cPlayer not found."
+  status_unknown: "Unknown"
+  status_enabled: "&aEnabled"
+  status_disabled: "&cDisabled"
+  status_ok: "&aReady"
+  status_unavailable: "&cUnavailable"
+  account_status:
+    - "&8&m--------------------------------"
+    - "&b&lDiscord Account Status"
+    - "&7Discord: &f{discord}"
+    - "&7Linked at: &f{linked_at}"
+    - "&72FA: {two_factor}"
+    - "&8&m--------------------------------"
+  admin_status:
+    - "&8&m--------------------------------"
+    - "&b&lNexDiscordLink System Status"
+    - "&7Version: &f{version}"
+    - "&7Database: &f{database_type} &8- {database_status}"
+    - "&7Discord bot: {bot_status} &8(&f{guild_count} guilds&8)"
+    - "&7Sensitive data protection: {security_status}"
+    - "&8&m--------------------------------"
 
 update:
   notification:
