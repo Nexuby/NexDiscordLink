@@ -137,6 +137,16 @@ discord:
     fail: "Linking failed."
   command:
     no_dm: "This command cannot be used in DMs."
+    link:
+      description: "Link your Minecraft account with a code"
+      option: "Link code generated on the Minecraft server"
+      missing_code: "You must provide a link code."
+    unlink:
+      description: "Remove your Minecraft account link"
+      success: "Your Minecraft account link has been removed."
+    help:
+      description: "Show NexDiscordLink commands"
+      content: "**NexDiscordLink**\n`/link code:<code>` — link your account\n`/profile` — show the linked profile\n`/unlink` — remove the link\n`/help` — show this message"
     console:
       disabled: "Console command is disabled in config."
       invalid: "That command is not valid."

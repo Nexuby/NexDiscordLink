@@ -3,6 +3,7 @@ package net.nex.discordlink.bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.nex.discordlink.NexDiscordLink;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -21,17 +22,21 @@ public class SlashCommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        if (event.getName().equals("profile")) {
-            if (event.getGuild() == null) {
-                event.reply(plugin.getLanguageManager().getMessage("discord.command.no_dm")).setEphemeral(true).queue();
-                return;
+        switch (DiscordCommandRouter.resolve(event.getName())) {
+            case PROFILE -> handleProfileCommand(event);
+            case LINK -> handleLinkCommand(event);
+            case UNLINK -> handleUnlinkCommand(event);
+            case HELP -> event.reply(plugin.getLanguageManager().getMessage("discord.command.help.content"))
+                    .setEphemeral(true)
+                    .queue();
+            case UNKNOWN -> {
+                // Handled by the listener responsible for that command.
             }
-            handleProfileCommand(event);
         }
     }
 
     private void handleProfileCommand(SlashCommandInteractionEvent event) {
-        event.deferReply().queue();
+        event.deferReply(true).queue();
 
         String discordId = event.getUser().getId();
 
@@ -48,6 +53,50 @@ public class SlashCommandListener extends ListenerAdapter {
         }
 
         Bukkit.getScheduler().runTask(plugin, () -> sendProfile(event, uuid));
+    }
+
+    private void handleLinkCommand(SlashCommandInteractionEvent event) {
+        OptionMapping option = event.getOption("code");
+        if (option == null) option = event.getOption("kod");
+        if (option == null) {
+            event.reply(plugin.getLanguageManager().getMessage("discord.command.link.missing_code"))
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
+
+        String code = option.getAsString().trim();
+        event.deferReply(true).queue();
+        plugin.getLinkManager().processLinkCode(
+                code,
+                event.getUser().getId(),
+                event.getUser().getName(),
+                message -> event.getHook().sendMessage(message).setEphemeral(true).queue()
+        );
+    }
+
+    private void handleUnlinkCommand(SlashCommandInteractionEvent event) {
+        event.deferReply(true).queue();
+        String discordId = event.getUser().getId();
+        UUID uuid = plugin.getDatabaseManager().getPlayerUUID(discordId);
+        if (uuid == null) {
+            event.getHook().sendMessage(plugin.getLanguageManager().getMessage("discord.command.profile.not_linked"))
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
+
+        plugin.getRoleManager().removePlayerRoles(discordId);
+        plugin.getDatabaseManager().removePlayer(uuid);
+        event.getHook().sendMessage(plugin.getLanguageManager().getMessage("discord.command.unlink.success"))
+                .setEphemeral(true)
+                .queue();
+
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (Bukkit.getPlayer(uuid) != null) {
+                plugin.getLanguageManager().sendMessage(Bukkit.getPlayer(uuid), "commands.unlink_success");
+            }
+        });
     }
 
     private void sendProfile(SlashCommandInteractionEvent event, UUID uuid) {

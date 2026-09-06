@@ -137,6 +137,16 @@ discord:
     fail: "Eşleşme başarısız."
   command:
     no_dm: "Bu komut DM üzerinden kullanılamaz."
+    link:
+      description: "Minecraft hesabını bir kodla eşleştir"
+      option: "Minecraft sunucusunda oluşturduğun eşleme kodu"
+      missing_code: "Bir eşleme kodu girmelisin."
+    unlink:
+      description: "Minecraft hesap eşlemesini kaldır"
+      success: "Minecraft hesap eşlemen kaldırıldı."
+    help:
+      description: "NexDiscordLink komutlarını göster"
+      content: "**NexDiscordLink**\n`/eşle kod:<kod>` — hesabını eşleştir\n`/hesap` — eşlenen profili göster\n`/eşlemeyi-kaldır` — eşlemeyi kaldır\n`/yardım` — bu mesajı göster"
     console:
       disabled: "Konsol komutu yapılandırmada devre dışı."
       invalid: "Bu komut geçerli değil."

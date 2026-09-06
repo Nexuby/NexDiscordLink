@@ -80,6 +80,10 @@ For managed deployments, provide a Base64-encoded 32-byte key through the `NEXDI
 | Command | Description |
 | --- | --- |
 | `/profile` | Display the linked Minecraft profile. |
+| `/hesap` | Display the linked Minecraft profile in Turkish. |
+| `/link code:<code>` / `/eşle kod:<kod>` | Link a Minecraft account directly from Discord. |
+| `/unlink` / `/eşlemeyi-kaldır` | Remove the current account link. |
+| `/help` / `/yardım` | Display the available account commands. |
 | `/setup-link` | Publish the modal-linking message. |
 | `/console <command>` | Execute a server command when explicitly enabled. |
 

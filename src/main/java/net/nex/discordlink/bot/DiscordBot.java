@@ -57,6 +57,15 @@ public class DiscordBot {
                 // Register Slash Commands
                 startedJda.updateCommands().addCommands(
                     Commands.slash("profile", plugin.getLanguageManager().getMessage("discord.command.profile.description")),
+                    Commands.slash("hesap", plugin.getLanguageManager().getMessage("discord.command.profile.description")),
+                    Commands.slash("link", plugin.getLanguageManager().getMessage("discord.command.link.description"))
+                        .addOption(OptionType.STRING, "code", plugin.getLanguageManager().getMessage("discord.command.link.option"), true),
+                    Commands.slash("eşle", plugin.getLanguageManager().getMessage("discord.command.link.description"))
+                        .addOption(OptionType.STRING, "kod", plugin.getLanguageManager().getMessage("discord.command.link.option"), true),
+                    Commands.slash("unlink", plugin.getLanguageManager().getMessage("discord.command.unlink.description")),
+                    Commands.slash("eşlemeyi-kaldır", plugin.getLanguageManager().getMessage("discord.command.unlink.description")),
+                    Commands.slash("help", plugin.getLanguageManager().getMessage("discord.command.help.description")),
+                    Commands.slash("yardım", plugin.getLanguageManager().getMessage("discord.command.help.description")),
                     Commands.slash("setup-link", "Setup the link channel message (Admin only)")
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(net.dv8tion.jda.api.Permission.ADMINISTRATOR)),
                     Commands.slash("console", "Execute a command in server console")
