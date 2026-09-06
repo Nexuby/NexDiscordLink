@@ -1,12 +1,14 @@
 package net.nex.discordlink.bot;
 
 import org.junit.jupiter.api.Test;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
 import static net.nex.discordlink.bot.DiscordCommandRouter.CommandType.HELP;
 import static net.nex.discordlink.bot.DiscordCommandRouter.CommandType.LINK;
 import static net.nex.discordlink.bot.DiscordCommandRouter.CommandType.PROFILE;
 import static net.nex.discordlink.bot.DiscordCommandRouter.CommandType.UNLINK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class DiscordCommandRouterTest {
 
@@ -19,5 +21,12 @@ class DiscordCommandRouterTest {
         assertEquals(UNLINK, DiscordCommandRouter.resolve("unlink"));
         assertEquals(UNLINK, DiscordCommandRouter.resolve("eşlemeyi-kaldır"));
         assertEquals(HELP, DiscordCommandRouter.resolve("yardım"));
+    }
+
+    @Test
+    void turkishSlashCommandNamesAreAcceptedByJda() {
+        assertDoesNotThrow(() -> Commands.slash("eşle", "Hesabını eşleştir"));
+        assertDoesNotThrow(() -> Commands.slash("eşlemeyi-kaldır", "Eşlemeyi kaldır"));
+        assertDoesNotThrow(() -> Commands.slash("yardım", "Komutları göster"));
     }
 }

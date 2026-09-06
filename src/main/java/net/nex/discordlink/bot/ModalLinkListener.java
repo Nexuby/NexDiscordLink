@@ -85,10 +85,11 @@ public class ModalLinkListener extends ListenerAdapter {
                 return;
             }
 
+            int codeLength = plugin.getLinkManager().getCodeLength();
             TextInput codeInput = TextInput.create("code", plugin.getConfig().getString("link-system.modal.input-label", "Code"), TextInputStyle.SHORT)
-                    .setPlaceholder(plugin.getConfig().getString("link-system.modal.input-placeholder", "Enter 4-digit code"))
-                    .setMinLength(4)
-                    .setMaxLength(4)
+                    .setPlaceholder(plugin.getConfig().getString("link-system.modal.input-placeholder", "Enter your link code"))
+                    .setMinLength(codeLength)
+                    .setMaxLength(codeLength)
                     .setRequired(true)
                     .build();
 

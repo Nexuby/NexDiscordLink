@@ -164,10 +164,14 @@ public class LinkManager {
     }
 
     private String createNumericCode() {
-        int length = Math.max(4, Math.min(9, plugin.getConfig().getInt("link-system.code-length", 6)));
+        int length = getCodeLength();
         int bound = 1;
         for (int i = 0; i < length; i++) bound *= 10;
         return String.format("%0" + length + "d", random.nextInt(bound));
+    }
+
+    public int getCodeLength() {
+        return Math.max(4, Math.min(9, plugin.getConfig().getInt("link-system.code-length", 6)));
     }
 
     private boolean isProxyMode() {

@@ -19,8 +19,8 @@ public class LinkBotListener extends ListenerAdapter {
 
         String message = event.getMessage().getContentRaw().trim();
 
-        // Check if it's a 4 digit code
-        if (message.matches("\\d{4}")) {
+        int codeLength = plugin.getLinkManager().getCodeLength();
+        if (message.matches("\\d{" + codeLength + "}")) {
             if (!plugin.getLinkManager().isDmEnabled()) return;
 
             plugin.getLinkManager().processLinkCode(

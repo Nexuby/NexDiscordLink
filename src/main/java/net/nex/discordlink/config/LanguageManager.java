@@ -6,6 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +24,8 @@ public class LanguageManager {
     }
 
     public void loadLanguages() {
-        String lang = plugin.getConfigManager().getLanguage();
+        String lang = plugin.getConfigManager().getLanguage().toLowerCase(java.util.Locale.ROOT);
+        fallbackConfig = null;
 
         // Always save default language files (won't overwrite if exists)
         plugin.saveResource("lang/messages_en.yml", false);
@@ -35,16 +39,35 @@ public class LanguageManager {
         }
 
         langConfig = YamlConfiguration.loadConfiguration(langFile);
+        YamlConfiguration bundledLanguage = loadBundledLanguage(lang);
+        if (bundledLanguage != null) langConfig.setDefaults(bundledLanguage);
 
         // Load fallback (en) if selected lang is not en
         if (!lang.equalsIgnoreCase("en")) {
             File fallbackFile = new File(plugin.getDataFolder(), "lang/messages_en.yml");
             if (fallbackFile.exists()) {
                 fallbackConfig = YamlConfiguration.loadConfiguration(fallbackFile);
+                YamlConfiguration bundledEnglish = loadBundledLanguage("en");
+                if (bundledEnglish != null) fallbackConfig.setDefaults(bundledEnglish);
             }
+        } else {
+            fallbackConfig = null;
         }
 
         prefix = colorize(langConfig.getString("prefix", "&8[&bNexDiscordLink&8] &7"));
+    }
+
+    private YamlConfiguration loadBundledLanguage(String language) {
+        String resourcePath = "lang/messages_" + language + ".yml";
+        try (InputStream input = plugin.getResource(resourcePath)) {
+            if (input == null) return null;
+            return YamlConfiguration.loadConfiguration(
+                    new InputStreamReader(input, StandardCharsets.UTF_8)
+            );
+        } catch (java.io.IOException exception) {
+            plugin.getLogger().warning("Could not load bundled language defaults for " + language);
+            return null;
+        }
     }
 
     public String getMessage(String key) {
