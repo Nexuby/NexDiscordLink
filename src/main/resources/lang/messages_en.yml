@@ -11,10 +11,12 @@ console:
   bot_starting: "Starting Discord bot..."
   bot_started: "Discord bot started as {bot_name}!"
   bot_error: "Failed to start Discord bot: {error}"
+  bot_skipped_proxy: "Discord bot is disabled on this proxy node; shared MySQL link codes will be used."
   startup_config_loaded: "&a [✔] &fConfig Loaded"
   startup_lang_loaded: "&a [✔] &fLanguage Loaded"
   startup_database_connected: "&a [✔] &fDatabase Connected"
   startup_bot_started: "&a [✔] &fDiscord Bot Started"
+  startup_proxy_worker: "&a [✔] &fProxy Worker Node Ready"
   startup_ready: "&e Plugin is ready to use!"
 
 security:
@@ -93,6 +95,7 @@ commands:
   help: "&bNexDiscordLink &7v{version} - Use &b/nexdiscord reload &7to reload config."
   link_usage: "Usage: /link"
   link_already_linked: "&cYou are already linked!"
+  link_code_failed: "&cA link code could not be generated. Please try again."
   link_code_generated_dm: "&aYour link code is: &b{code}&a. Send this code to the bot via DM."
   link_code_generated_modal: "&aYour link code is: &b{code}&a. Enter it in the Discord link modal."
   link_code_generated_both: "&aYour link code is: &b{code}&a. Send it to the bot via DM or enter it in the Discord link modal."
@@ -119,6 +122,7 @@ commands:
   status_disabled: "&cDisabled"
   status_ok: "&aReady"
   status_unavailable: "&cUnavailable"
+  status_standalone: "Standalone"
   account_status:
     - "&8&m--------------------------------"
     - "&b&lDiscord Account Status"
@@ -133,6 +137,7 @@ commands:
     - "&7Database: &f{database_type} &8- {database_status}"
     - "&7Discord bot: {bot_status} &8(&f{guild_count} guilds&8)"
     - "&7Sensitive data protection: {security_status}"
+    - "&7Runtime mode: &f{proxy_mode}"
     - "&8&m--------------------------------"
 
 update:

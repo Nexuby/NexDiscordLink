@@ -16,6 +16,12 @@ public interface DatabaseManager {
     boolean isLinked(UUID uuid);
     boolean updateIpAddress(UUID uuid, String ip);
 
+    boolean createLinkCode(String code, UUID uuid, String serverId, long expiresAt);
+    String getActiveLinkCode(UUID uuid, long now);
+    UUID getLinkCodeOwner(String code, long now);
+    void removeLinkCode(String code, UUID uuid);
+    void deleteExpiredLinkCodes(long now);
+
     int getLinkRewardCount(UUID uuid);
     void incrementLinkRewardCount(UUID uuid);
     void resetLinkRewardCount(UUID uuid);

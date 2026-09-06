@@ -22,7 +22,7 @@ public class SyncManager {
         if (discordId == null) return;
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (plugin.getDiscordBot().getJda() == null) return;
+            if (plugin.getDiscordBot() == null || plugin.getDiscordBot().getJda() == null) return;
 
             // Iterate all guilds or specific guild
             // For simplicity, we assume the bot is in one main guild or we update in all
@@ -54,7 +54,7 @@ public class SyncManager {
         if (discordId == null) return;
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (plugin.getDiscordBot().getJda() == null) return;
+            if (plugin.getDiscordBot() == null || plugin.getDiscordBot().getJda() == null) return;
 
             for (Guild guild : plugin.getDiscordBot().getJda().getGuilds()) {
                 guild.retrieveMemberById(discordId).queue(member -> {

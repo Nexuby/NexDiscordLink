@@ -25,6 +25,7 @@ public class NexDiscordLink extends JavaPlugin {
     private net.nex.discordlink.utils.UnlinkManager unlinkManager;
     private BukkitTask rewardTask;
     private BukkitTask roleSyncTask;
+    private BukkitTask proxyLinkTask;
     private int botGeneration;
 
     @Override
@@ -92,6 +93,7 @@ public class NexDiscordLink extends JavaPlugin {
 
         scheduleRewards();
         scheduleRoleSync();
+        scheduleProxyLinkChecks();
 
         // Initialize bStats
         int pluginId = 28456; // Replace with your own plugin ID
@@ -115,7 +117,9 @@ public class NexDiscordLink extends JavaPlugin {
         sender.sendMessage(languageManager.getMessage("console.startup_config_loaded"));
         sender.sendMessage(languageManager.getMessage("console.startup_lang_loaded"));
         sender.sendMessage(languageManager.getMessage("console.startup_database_connected"));
-        sender.sendMessage(languageManager.getMessage("console.startup_bot_started"));
+        sender.sendMessage(languageManager.getMessage(
+                discordBot == null ? "console.startup_proxy_worker" : "console.startup_bot_started"
+        ));
         sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&f"));
         sender.sendMessage(languageManager.getMessage("console.startup_ready"));
         sender.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', "&f"));
@@ -123,6 +127,10 @@ public class NexDiscordLink extends JavaPlugin {
 
     private boolean setupDatabase() {
         String type = getConfig().getString("database-settings.type", "sqlite");
+        if (getConfig().getBoolean("proxy.enabled", false) && !type.equalsIgnoreCase("mysql")) {
+            getLogger().severe("Proxy mode requires the shared MySQL database type.");
+            return false;
+        }
         if (type.equalsIgnoreCase("mysql")) {
             this.databaseManager = new net.nex.discordlink.database.MySQLDatabase(this);
         } else {
@@ -155,6 +163,7 @@ public class NexDiscordLink extends JavaPlugin {
 
         scheduleRewards();
         scheduleRoleSync();
+        scheduleProxyLinkChecks();
         startDiscordBot(sender, true);
     }
 
@@ -187,7 +196,34 @@ public class NexDiscordLink extends JavaPlugin {
         }, interval, interval);
     }
 
+    private void scheduleProxyLinkChecks() {
+        if (proxyLinkTask != null) proxyLinkTask.cancel();
+        if (!getConfig().getBoolean("proxy.enabled", false)) {
+            proxyLinkTask = null;
+            return;
+        }
+        long ticks = Math.max(20L, getConfig().getLong("proxy.link-check-interval-ticks", 40L));
+        proxyLinkTask = getServer().getScheduler().runTaskTimer(
+                this,
+                () -> linkManager.checkProxyCompletions(),
+                ticks,
+                ticks
+        );
+    }
+
     private void startDiscordBot(CommandSender reloadSender, boolean reload) {
+        if (getConfig().getBoolean("proxy.enabled", false)
+                && !getConfig().getBoolean("proxy.bot-enabled", true)) {
+            this.discordBot = null;
+            languageManager.sendConsoleMessage("console.bot_skipped_proxy");
+            if (reload && reloadSender != null) {
+                languageManager.sendMessage(reloadSender, "commands.reload_success");
+            } else {
+                printStartupMessage();
+            }
+            return;
+        }
+
         int generation = ++botGeneration;
         this.discordBot = new net.nex.discordlink.bot.DiscordBot(this);
         this.discordBot.start(success -> {
@@ -220,6 +256,10 @@ public class NexDiscordLink extends JavaPlugin {
         if (roleSyncTask != null) {
             roleSyncTask.cancel();
             roleSyncTask = null;
+        }
+        if (proxyLinkTask != null) {
+            proxyLinkTask.cancel();
+            proxyLinkTask = null;
         }
         if (consoleAppender != null) {
             consoleAppender.unregister();

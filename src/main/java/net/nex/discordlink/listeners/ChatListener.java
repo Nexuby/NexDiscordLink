@@ -38,7 +38,7 @@ public class ChatListener implements Listener {
                     () -> sendWebhook(webhookUrl, playerName, message)
             );
         } else if (channelId != null && !channelId.isEmpty()) {
-            if (plugin.getDiscordBot().getJda() == null) return;
+            if (plugin.getDiscordBot() == null || plugin.getDiscordBot().getJda() == null) return;
             TextChannel channel = plugin.getDiscordBot().getJda().getTextChannelById(channelId);
             if (channel != null) {
                 channel.sendMessage("**" + playerName + "**: " + message)

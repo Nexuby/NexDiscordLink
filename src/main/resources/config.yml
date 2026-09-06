@@ -18,6 +18,12 @@ settings:
   language: "en" # Options: en, tr
   update-checker: true
 
+proxy:
+  enabled: false
+  server-id: "survival-1" # Must be unique for each backend
+  bot-enabled: true # Enable on one backend; shared MySQL codes work across all backends
+  link-check-interval-ticks: 40 # Worker notification/reward polling interval (2 seconds)
+
 database-settings:
   type: "sqlite" # Options: sqlite, mysql
   host: "localhost"
@@ -66,13 +72,15 @@ rewards:
 link-system:
   type: "BOTH" # Options: DM, MODAL, BOTH
   account-policy: "ONE_TO_ONE" # One Minecraft account per Discord account and vice versa
+  code-length: 6
+  code-expiry-minutes: 5
   modal:
     channel-id: "YOUR_LINK_CHANNEL_ID"
     button-label: "Link Account"
     button-style: "PRIMARY" # PRIMARY (blue), SECONDARY (grey), SUCCESS (green), DANGER (red)
     modal-title: "Link Your Account"
     input-label: "Link Code"
-    input-placeholder: "Enter your 4-digit code"
+    input-placeholder: "Enter your link code"
 
 unlink-security:
   require-confirmation: true # Uses 2FA when enabled, otherwise sends a Discord DM approval

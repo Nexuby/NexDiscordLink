@@ -34,6 +34,10 @@ public class LinkCommand implements CommandExecutor {
         }
 
         String code = plugin.getLinkManager().generateCode(player.getUniqueId());
+        if (code == null) {
+            plugin.getLanguageManager().sendMessage(player, "commands.link_code_failed");
+            return true;
+        }
         String messageKey;
         if (plugin.getLinkManager().isDmEnabled() && plugin.getLinkManager().isModalEnabled()) {
             messageKey = "commands.link_code_generated_both";

@@ -11,10 +11,12 @@ console:
   bot_starting: "Discord botu başlatılıyor..."
   bot_started: "Discord botu {bot_name} olarak başlatıldı!"
   bot_error: "Discord botu başlatılamadı: {error}"
+  bot_skipped_proxy: "Bu proxy node'unda Discord botu devre dışı; ortak MySQL eşleme kodları kullanılacak."
   startup_config_loaded: "&a [✔] &fYapılandırma Yüklendi"
   startup_lang_loaded: "&a [✔] &fDil Dosyaları Yüklendi"
   startup_database_connected: "&a [✔] &fVeritabanı Bağlandı"
   startup_bot_started: "&a [✔] &fDiscord Botu Başlatıldı"
+  startup_proxy_worker: "&a [✔] &fProxy Çalışan Node'u Hazır"
   startup_ready: "&e Eklenti kullanıma hazır!"
 
 security:
@@ -93,6 +95,7 @@ commands:
   help: "&bNexDiscordLink &7v{version} - Yapılandırmayı yenilemek için &b/nexdiscord reload &7kullanın."
   link_usage: "Kullanım: /link"
   link_already_linked: "&cZaten hesabınız bağlı!"
+  link_code_failed: "&cEşleme kodu oluşturulamadı. Lütfen tekrar deneyin."
   link_code_generated_dm: "&aBağlantı kodunuz: &b{code}&a. Bu kodu bota DM üzerinden gönderin."
   link_code_generated_modal: "&aBağlantı kodunuz: &b{code}&a. Kodu Discord bağlantı penceresine girin."
   link_code_generated_both: "&aBağlantı kodunuz: &b{code}&a. Kodu bota DM üzerinden gönderin veya Discord bağlantı penceresine girin."
@@ -119,6 +122,7 @@ commands:
   status_disabled: "&cKapalı"
   status_ok: "&aHazır"
   status_unavailable: "&cKullanılamıyor"
+  status_standalone: "Tek sunucu"
   account_status:
     - "&8&m--------------------------------"
     - "&b&lDiscord Hesap Durumu"
@@ -133,6 +137,7 @@ commands:
     - "&7Veritabanı: &f{database_type} &8- {database_status}"
     - "&7Discord botu: {bot_status} &8(&f{guild_count} sunucu&8)"
     - "&7Güvenli veri koruması: {security_status}"
+    - "&7Çalışma modu: &f{proxy_mode}"
     - "&8&m--------------------------------"
 
 update:

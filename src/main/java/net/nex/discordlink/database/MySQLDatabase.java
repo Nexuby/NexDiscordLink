@@ -70,12 +70,21 @@ public class MySQLDatabase implements DatabaseManager {
                 "uuid VARCHAR(36) PRIMARY KEY, " +
                 "count INTEGER DEFAULT 0" +
                 ");";
+        String queryCodes = "CREATE TABLE IF NOT EXISTS nex_link_codes (" +
+                "code VARCHAR(12) PRIMARY KEY, " +
+                "uuid VARCHAR(36) UNIQUE NOT NULL, " +
+                "server_id VARCHAR(64) NOT NULL, " +
+                "expires_at BIGINT NOT NULL" +
+                ");";
 
         try (Connection conn = dataSource.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(queryLink)) {
                 ps.execute();
             }
             try (PreparedStatement ps = conn.prepareStatement(queryRewards)) {
+                ps.execute();
+            }
+            try (PreparedStatement ps = conn.prepareStatement(queryCodes)) {
                 ps.execute();
             }
 
@@ -252,6 +261,71 @@ public class MySQLDatabase implements DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public boolean createLinkCode(String code, UUID uuid, String serverId, long expiresAt) {
+        String query = "INSERT INTO nex_link_codes (code, uuid, server_id, expires_at) VALUES (?, ?, ?, ?)";
+        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, code);
+            ps.setString(2, uuid.toString());
+            ps.setString(3, serverId);
+            ps.setLong(4, expiresAt);
+            return ps.executeUpdate() == 1;
+        } catch (SQLException exception) {
+            return false;
+        }
+    }
+
+    @Override
+    public String getActiveLinkCode(UUID uuid, long now) {
+        String query = "SELECT code FROM nex_link_codes WHERE uuid = ? AND expires_at > ?";
+        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, uuid.toString());
+            ps.setLong(2, now);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getString("code") : null;
+            }
+        } catch (SQLException exception) {
+            return null;
+        }
+    }
+
+    @Override
+    public UUID getLinkCodeOwner(String code, long now) {
+        String query = "SELECT uuid FROM nex_link_codes WHERE code = ? AND expires_at > ?";
+        try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, code);
+            ps.setLong(2, now);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? UUID.fromString(rs.getString("uuid")) : null;
+            }
+        } catch (SQLException | IllegalArgumentException exception) {
+            return null;
+        }
+    }
+
+    @Override
+    public void removeLinkCode(String code, UUID uuid) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM nex_link_codes WHERE code = ? AND uuid = ?")) {
+            ps.setString(1, code);
+            ps.setString(2, uuid.toString());
+            ps.executeUpdate();
+        } catch (SQLException exception) {
+            plugin.getLogger().warning("Could not remove shared link code: " + exception.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteExpiredLinkCodes(long now) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM nex_link_codes WHERE expires_at <= ?")) {
+            ps.setLong(1, now);
+            ps.executeUpdate();
+        } catch (SQLException exception) {
+            plugin.getLogger().warning("Could not clean expired link codes: " + exception.getMessage());
         }
     }
 

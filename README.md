@@ -112,6 +112,8 @@ Supported database types:
 - `sqlite`
 - `mysql`
 
+For Velocity/Bungee networks, enable `proxy.enabled`, configure the same MySQL database on every backend, and give every backend a unique `proxy.server-id`. Shared, expiring link codes can then be redeemed by the Discord bot from any node. Set `proxy.bot-enabled: true` on the designated bot node and `false` on worker nodes. Features that send immediate Discord DMs, such as IP-change and unlink confirmation, require a bot-enabled node; keep those protections on the bot node or use 2FA on workers.
+
 Optional PlaceholderAPI placeholders:
 
 - `%nexdiscord_linked%`

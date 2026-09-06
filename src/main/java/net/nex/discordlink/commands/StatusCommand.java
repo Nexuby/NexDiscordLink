@@ -25,6 +25,9 @@ public class StatusCommand {
         String databaseType = plugin.getConfig().getString("database-settings.type", "sqlite").toUpperCase();
         String botStatus = localizedState(botConnected);
         String securityStatus = localizedState(plugin.getSecurityManager() != null);
+        String proxyMode = plugin.getConfig().getBoolean("proxy.enabled", false)
+                ? plugin.getConfig().getString("proxy.server-id", "server")
+                : plugin.getLanguageManager().getMessage("commands.status_standalone");
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             boolean databaseHealthy = plugin.getDatabaseManager().ping();
@@ -36,7 +39,8 @@ public class StatusCommand {
                     "database_status", localizedState(databaseHealthy),
                     "bot_status", botStatus,
                     "guild_count", Integer.toString(guildCount),
-                    "security_status", securityStatus
+                    "security_status", securityStatus,
+                    "proxy_mode", proxyMode
             ));
         });
         return true;
