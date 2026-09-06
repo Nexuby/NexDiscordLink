@@ -77,6 +77,8 @@ commands:
   unlink_success: "&aSuccessfully unlinked your account."
   unlink_not_linked: "&cYou are not linked!"
   reload_success: "&aConfiguration reloaded."
+  reload_started: "&eReloading configuration, database, reward scheduler, and Discord bot..."
+  reload_failed: "&cReload failed. NexDiscordLink has been disabled to prevent an inconsistent state."
   no_permission: "&cYou do not have permission."
   link_success_player: "&aSuccessfully linked to Discord account: &b{discord}"
   2fa_usage: "&cUsage: /2fa <setup|login|disable>"
@@ -116,8 +118,10 @@ discord:
     no_dm: "This command cannot be used in DMs."
     console:
       disabled: "Console command is disabled in config."
-      success: "Command executed: `{command}`"
-      fail: "Failed to execute command: `{command}`"
+      invalid: "That command is not valid."
+      not_allowed: "That command is not in the configured whitelist."
+      success: "Command executed: `/{command}`"
+      fail: "Failed to execute command: `/{command}`"
     profile:
       description: "View your linked profile"
       not_linked: "You are not linked to any Minecraft account!"

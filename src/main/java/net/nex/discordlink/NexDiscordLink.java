@@ -2,7 +2,9 @@ package net.nex.discordlink;
 
 import net.nex.discordlink.config.ConfigManager;
 import net.nex.discordlink.config.LanguageManager;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 public class NexDiscordLink extends JavaPlugin {
 
@@ -18,6 +20,8 @@ public class NexDiscordLink extends JavaPlugin {
     private net.nex.discordlink.utils.TwoFactorManager twoFactorManager;
     private net.nex.discordlink.utils.SensitiveDataProtector sensitiveDataProtector;
     private net.nex.discordlink.utils.ConsoleAppender consoleAppender;
+    private BukkitTask rewardTask;
+    private int botGeneration;
 
     @Override
     public void onEnable() {
@@ -59,10 +63,6 @@ public class NexDiscordLink extends JavaPlugin {
         this.consoleAppender = new net.nex.discordlink.utils.ConsoleAppender(this);
         this.consoleAppender.register();
 
-        // Initialize Discord Bot
-        this.discordBot = new net.nex.discordlink.bot.DiscordBot(this);
-        this.discordBot.start();
-
         // Register Listeners
         getServer().getPluginManager().registerEvents(new net.nex.discordlink.listeners.SecurityListener(this, securityManager), this);
         getServer().getPluginManager().registerEvents(new net.nex.discordlink.listeners.SyncListener(this, syncManager), this);
@@ -76,15 +76,13 @@ public class NexDiscordLink extends JavaPlugin {
         getCommand("unlink").setExecutor(new net.nex.discordlink.commands.UnlinkCommand(this));
         getCommand("2fa").setExecutor(new net.nex.discordlink.commands.TwoFactorCommand(this));
 
-        // Start Salary Scheduler
-        long interval = getConfig().getLong("rewards.salary-interval", 60) * 20 * 60; // Minutes to ticks
-        new net.nex.discordlink.utils.RewardScheduler(this).runTaskTimer(this, interval, interval);
+        scheduleRewards();
 
         // Initialize bStats
         int pluginId = 28456; // Replace with your own plugin ID
         new org.bstats.bukkit.Metrics(this, pluginId);
 
-        printStartupMessage();
+        startDiscordBot(null, false);
     }
 
     private void printStartupMessage() {
@@ -118,9 +116,73 @@ public class NexDiscordLink extends JavaPlugin {
         return this.databaseManager.init();
     }
 
+    public void reloadPlugin(CommandSender sender) {
+        languageManager.sendMessage(sender, "commands.reload_started");
+
+        botGeneration++;
+        if (discordBot != null) {
+            discordBot.stop();
+            discordBot = null;
+        }
+
+        configManager.loadConfig();
+        languageManager.loadLanguages();
+
+        if (databaseManager != null) {
+            databaseManager.close();
+        }
+        if (!setupDatabase()) {
+            languageManager.sendMessage(sender, "commands.reload_failed");
+            languageManager.sendConsoleMessage("console.database_fatal");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        scheduleRewards();
+        startDiscordBot(sender, true);
+    }
+
+    private void scheduleRewards() {
+        if (rewardTask != null) {
+            rewardTask.cancel();
+        }
+
+        long minutes = Math.max(1L, getConfig().getLong("rewards.salary-interval", 60));
+        long interval = minutes * 20L * 60L;
+        rewardTask = new net.nex.discordlink.utils.RewardScheduler(this)
+                .runTaskTimer(this, interval, interval);
+    }
+
+    private void startDiscordBot(CommandSender reloadSender, boolean reload) {
+        int generation = ++botGeneration;
+        this.discordBot = new net.nex.discordlink.bot.DiscordBot(this);
+        this.discordBot.start(success -> {
+            if (generation != botGeneration || !isEnabled()) return;
+
+            if (success) {
+                if (reload) {
+                    languageManager.sendMessage(reloadSender, "commands.reload_success");
+                } else {
+                    printStartupMessage();
+                }
+                return;
+            }
+
+            if (reload && reloadSender != null) {
+                languageManager.sendMessage(reloadSender, "commands.reload_failed");
+            }
+            getServer().getPluginManager().disablePlugin(this);
+        });
+    }
+
     @Override
     public void onDisable() {
         // Shutdown logic
+        botGeneration++;
+        if (rewardTask != null) {
+            rewardTask.cancel();
+            rewardTask = null;
+        }
         if (consoleAppender != null) {
             consoleAppender.unregister();
         }

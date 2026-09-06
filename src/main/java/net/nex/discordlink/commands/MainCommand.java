@@ -24,9 +24,7 @@ public class MainCommand implements CommandExecutor {
                     return true;
                 }
 
-                plugin.getConfigManager().loadConfig();
-                plugin.getLanguageManager().loadLanguages();
-                plugin.getLanguageManager().sendMessage(sender, "commands.reload_success");
+                plugin.reloadPlugin(sender);
                 return true;
             }
 

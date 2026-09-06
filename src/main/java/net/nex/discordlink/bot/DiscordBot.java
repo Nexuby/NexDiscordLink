@@ -11,27 +11,32 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.nex.discordlink.NexDiscordLink;
 import org.bukkit.Bukkit;
 
+import java.util.function.Consumer;
+
 public class DiscordBot {
 
     private final NexDiscordLink plugin;
-    private JDA jda;
+    private volatile JDA jda;
+    private volatile boolean stopped;
 
     public DiscordBot(NexDiscordLink plugin) {
         this.plugin = plugin;
     }
 
-    public void start() {
+    public void start(Consumer<Boolean> completion) {
+        stopped = false;
         plugin.getLanguageManager().sendConsoleMessage("console.bot_starting");
 
         String token = plugin.getConfigManager().getBotToken();
         if (token == null || token.isEmpty() || token.equals("YOUR_BOT_TOKEN_HERE")) {
-            plugin.getLanguageManager().sendConsoleMessage("console.bot_error", "error", "Token is missing or invalid!");
+            completeOnMainThread(completion, false, null, "Token is missing or invalid");
             return;
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            JDA startedJda = null;
             try {
-                jda = JDABuilder.createDefault(token)
+                startedJda = JDABuilder.createDefault(token)
                         .enableIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.MESSAGE_CONTENT)
                         .addEventListeners(new SecurityBotListener(plugin))
                         .addEventListeners(new BotBoostListener(plugin))
@@ -42,10 +47,15 @@ public class DiscordBot {
                         .addEventListeners(new ConsoleCommandListener(plugin))
                         .build();
 
-                jda.awaitReady();
+                jda = startedJda;
+                startedJda.awaitReady();
+                if (stopped) {
+                    startedJda.shutdownNow();
+                    return;
+                }
 
                 // Register Slash Commands
-                jda.updateCommands().addCommands(
+                startedJda.updateCommands().addCommands(
                     Commands.slash("profile", plugin.getLanguageManager().getMessage("discord.command.profile.description")),
                     Commands.slash("setup-link", "Setup the link channel message (Admin only)")
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(net.dv8tion.jda.api.Permission.ADMINISTRATOR)),
@@ -54,19 +64,24 @@ public class DiscordBot {
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(net.dv8tion.jda.api.Permission.ADMINISTRATOR))
                 ).queue();
 
-                String botName = jda.getSelfUser().getName();
-                plugin.getLanguageManager().sendConsoleMessage("console.bot_started", "bot_name", botName);
-
-            } catch (InterruptedException e) {
-                plugin.getLanguageManager().sendConsoleMessage("console.bot_error", "error", e.getMessage());
-                e.printStackTrace();
+                completeOnMainThread(completion, true, startedJda.getSelfUser().getName(), null);
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                if (startedJda != null) startedJda.shutdownNow();
+                completeOnMainThread(completion, false, null, "Discord startup was interrupted");
+            } catch (Exception exception) {
+                if (startedJda != null) startedJda.shutdownNow();
+                completeOnMainThread(completion, false, null, exception.getMessage());
             }
         });
     }
 
     public void stop() {
-        if (jda != null) {
-            jda.shutdown();
+        stopped = true;
+        JDA current = jda;
+        jda = null;
+        if (current != null) {
+            current.shutdownNow();
         }
     }
 
@@ -80,5 +95,26 @@ public class DiscordBot {
 
     public JDA getJda() {
         return jda;
+    }
+
+    private void completeOnMainThread(Consumer<Boolean> completion, boolean success, String botName, String error) {
+        Runnable task = () -> {
+            if (success) {
+                plugin.getLanguageManager().sendConsoleMessage("console.bot_started", "bot_name", botName);
+            } else {
+                plugin.getLanguageManager().sendConsoleMessage(
+                        "console.bot_error",
+                        "error",
+                        error == null || error.isBlank() ? "Unknown error" : error
+                );
+            }
+            completion.accept(success);
+        };
+
+        if (Bukkit.isPrimaryThread()) {
+            task.run();
+        } else if (plugin.isEnabled()) {
+            Bukkit.getScheduler().runTask(plugin, task);
+        }
     }
 }

@@ -77,6 +77,8 @@ commands:
   unlink_success: "&aHesap bağlantısı başarıyla kaldırıldı."
   unlink_not_linked: "&cHesabınız bağlı değil!"
   reload_success: "&aYapılandırma yeniden yüklendi."
+  reload_started: "&eYapılandırma, veritabanı, ödül zamanlayıcısı ve Discord botu yeniden yükleniyor..."
+  reload_failed: "&cYeniden yükleme başarısız oldu. Tutarsız durumu önlemek için NexDiscordLink devre dışı bırakıldı."
   no_permission: "&cBuna yetkiniz yok."
   link_success_player: "&aDiscord hesabına başarıyla bağlandınız: &b{discord}"
   2fa_usage: "&cKullanım: /2fa <setup|login|disable>"
@@ -116,8 +118,10 @@ discord:
     no_dm: "Bu komut DM üzerinden kullanılamaz."
     console:
       disabled: "Konsol komutu yapılandırmada devre dışı."
-      success: "Komut yürütüldü: `{command}`"
-      fail: "Komut yürütülemedi: `{command}`"
+      invalid: "Bu komut geçerli değil."
+      not_allowed: "Bu komut yapılandırılmış izin listesinde değil."
+      success: "Komut yürütüldü: `/{command}`"
+      fail: "Komut yürütülemedi: `/{command}`"
     profile:
       description: "Bağlı profilinizi görüntüleyin"
       not_linked: "Herhangi bir Minecraft hesabına bağlı değilsiniz!"

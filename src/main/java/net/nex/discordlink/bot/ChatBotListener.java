@@ -24,11 +24,18 @@ public class ChatBotListener extends ListenerAdapter {
         if (event.getAuthor().isBot()) return;
 
         String format = plugin.getConfig().getString("chat-bridge.discord-to-game-format", "&8[&bDiscord&8] &f{user}: &7{message}");
-        String message = format
-                .replace("{user}", event.getAuthor().getName())
-                .replace("{message}", event.getMessage().getContentDisplay());
-
-        String formattedMessage = ChatColor.translateAlternateColorCodes('&', message);
+        String formattedMessage = ChatColor.translateAlternateColorCodes('&', format)
+                .replace("{user}", sanitizeGameText(event.getAuthor().getName(), 64))
+                .replace("{message}", sanitizeGameText(event.getMessage().getContentDisplay(), 256));
         Bukkit.getScheduler().runTask(plugin, () -> Bukkit.broadcastMessage(formattedMessage));
+    }
+
+    private String sanitizeGameText(String value, int maxLength) {
+        String sanitized = value
+                .replace("§", "")
+                .replaceAll("[\\p{Cntrl}&&[^\\r\\n\\t]]", "")
+                .replace("\r", " ")
+                .replace("\n", " ");
+        return sanitized.length() > maxLength ? sanitized.substring(0, maxLength) : sanitized;
     }
 }

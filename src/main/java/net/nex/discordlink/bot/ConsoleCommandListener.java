@@ -7,6 +7,9 @@ import net.nex.discordlink.NexDiscordLink;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.List;
+import java.util.Locale;
+
 public class ConsoleCommandListener extends ListenerAdapter {
 
     private final NexDiscordLink plugin;
@@ -35,7 +38,22 @@ public class ConsoleCommandListener extends ListenerAdapter {
                 return;
             }
 
-            String command = event.getOption("command").getAsString();
+            String command = event.getOption("command").getAsString().trim();
+            if (command.startsWith("/") || command.contains("\n") || command.contains("\r")) {
+                event.reply(plugin.getLanguageManager().getMessage("discord.command.console.invalid")).setEphemeral(true).queue();
+                return;
+            }
+
+            String commandName = command.split("\\s+", 2)[0].toLowerCase(Locale.ROOT);
+            List<String> whitelist = plugin.getConfig().getStringList("console-command.whitelist");
+            boolean allowed = whitelist.stream()
+                    .map(entry -> entry.toLowerCase(Locale.ROOT).trim())
+                    .anyMatch(entry -> entry.equals(commandName));
+            if (!allowed) {
+                event.reply(plugin.getLanguageManager().getMessage("discord.command.console.not_allowed")).setEphemeral(true).queue();
+                return;
+            }
+
             event.deferReply().queue();
 
             // Execute command on main thread
@@ -45,7 +63,7 @@ public class ConsoleCommandListener extends ListenerAdapter {
                     boolean success = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 
                     String responseKey = success ? "discord.command.console.success" : "discord.command.console.fail";
-                    String response = plugin.getLanguageManager().getMessage(responseKey, "command", command);
+                    String response = plugin.getLanguageManager().getMessage(responseKey, "command", commandName);
 
                     event.getHook().sendMessage(response).queue();
                 }

@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 public class ChatListener implements Listener {
 
@@ -40,7 +41,9 @@ public class ChatListener implements Listener {
             if (plugin.getDiscordBot().getJda() == null) return;
             TextChannel channel = plugin.getDiscordBot().getJda().getTextChannelById(channelId);
             if (channel != null) {
-                channel.sendMessage("**" + playerName + "**: " + message).queue();
+                channel.sendMessage("**" + playerName + "**: " + message)
+                        .setAllowedMentions(Collections.emptyList())
+                        .queue();
             }
         }
     }
@@ -62,6 +65,7 @@ public class ChatListener implements Listener {
             String safeAvatarUrl = escapeJson(avatarUrl);
             String json = String.format("{\"username\": \"%s\", \"avatar_url\": \"%s\", \"content\": \"%s\"}",
                     safeUsername, safeAvatarUrl, safeContent);
+            json = json.substring(0, json.length() - 1) + ", \"allowed_mentions\": {\"parse\": []}}";
 
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = json.getBytes(StandardCharsets.UTF_8);

@@ -13,13 +13,20 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Queue;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.regex.Pattern;
 
 public class ConsoleAppender extends AbstractAppender {
 
     private static final int HTTP_TIMEOUT_MILLIS = 5000;
+    private static final int MAX_QUEUED_LINES = 1000;
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss")
             .withZone(ZoneId.systemDefault());
+    private static final Pattern DISCORD_TOKEN = Pattern.compile("(?:mfa\\.[A-Za-z0-9_-]{40,}|[MN][A-Za-z0-9_-]{20,}\\.[A-Za-z0-9_-]{6}\\.[A-Za-z0-9_-]{20,})");
+    private static final Pattern WEBHOOK_URL = Pattern.compile("https://(?:canary\\.|ptb\\.)?discord(?:app)?\\.com/api/webhooks/[^\\s]+");
+    private static final Pattern SENSITIVE_ASSIGNMENT = Pattern.compile("(?i)(bot-token|password|secret|api[-_]?key)\\s*[:=]\\s*\\S+");
+    private static final Pattern OTP_AUTH = Pattern.compile("otpauth://\\S+");
 
     private final NexDiscordLink plugin;
     private final Queue<String> logQueue = new ConcurrentLinkedQueue<>();
@@ -39,7 +46,7 @@ public class ConsoleAppender extends AbstractAppender {
         String channelId = plugin.getConfig().getString("channels.console-channel-id", "");
         if ((webhookUrl == null || webhookUrl.isEmpty()) && (channelId == null || channelId.isEmpty())) return;
 
-        String message = event.getMessage().getFormattedMessage();
+        String message = redact(event.getMessage().getFormattedMessage());
         // Filter out some spammy messages or color codes if needed
         // For now, just strip colors
         message = message.replaceAll("\u001B\\[[;\\d]*m", ""); // Strip ANSI colors
@@ -48,6 +55,9 @@ public class ConsoleAppender extends AbstractAppender {
         String level = event.getLevel().name();
 
         logQueue.add(String.format("[%s %s]: %s", time, level, message));
+        while (logQueue.size() > MAX_QUEUED_LINES) {
+            logQueue.poll();
+        }
     }
 
     private void sendLogs() {
@@ -75,7 +85,7 @@ public class ConsoleAppender extends AbstractAppender {
     }
 
     private void sendBatch(String content, boolean useWebhook, String webhookUrl) {
-        String finalContent = "```" + content + "```";
+        String finalContent = "```" + content.replace("```", "``\u200B`") + "```";
 
         if (useWebhook) {
             sendWebhook(webhookUrl, finalContent);
@@ -85,7 +95,9 @@ public class ConsoleAppender extends AbstractAppender {
 
             TextChannel channel = plugin.getDiscordBot().getJda().getTextChannelById(channelId);
             if (channel != null) {
-                channel.sendMessage(finalContent).queue();
+                channel.sendMessage(finalContent)
+                        .setAllowedMentions(Collections.emptyList())
+                        .queue();
             }
         }
     }
@@ -94,6 +106,9 @@ public class ConsoleAppender extends AbstractAppender {
         try {
             JsonObject json = new JsonObject();
             json.addProperty("content", content);
+            JsonObject allowedMentions = new JsonObject();
+            allowedMentions.add("parse", new com.google.gson.JsonArray());
+            json.add("allowed_mentions", allowedMentions);
 
             java.net.URL url = new java.net.URL(webhookUrl);
             java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
@@ -123,5 +138,12 @@ public class ConsoleAppender extends AbstractAppender {
     public void unregister() {
         Logger rootLogger = (Logger) LogManager.getRootLogger();
         rootLogger.removeAppender(this);
+    }
+
+    private String redact(String message) {
+        String redacted = DISCORD_TOKEN.matcher(message).replaceAll("<redacted-token>");
+        redacted = WEBHOOK_URL.matcher(redacted).replaceAll("<redacted-webhook>");
+        redacted = SENSITIVE_ASSIGNMENT.matcher(redacted).replaceAll("$1=<redacted>");
+        return OTP_AUTH.matcher(redacted).replaceAll("<redacted-otpauth-uri>");
     }
 }

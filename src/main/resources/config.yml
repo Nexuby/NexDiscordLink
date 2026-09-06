@@ -59,7 +59,11 @@ security-settings:
 
 console-command:
   enabled: false # Enable /console slash command on Discord (DANGEROUS - allows full server access!)
-  # whitelist: [] # Optional: If set, only these commands can be executed (e.g., ["say", "list", "tps"])
+  # Only root commands listed here can be executed. An empty list denies every command.
+  whitelist:
+    - "say"
+    - "list"
+    - "tps"
 
 sync:
   nickname:
