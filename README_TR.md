@@ -1,36 +1,56 @@
 # NexDiscordLink
 
 [![Build](https://github.com/Nexuby/NexDiscordLink/actions/workflows/build.yml/badge.svg)](https://github.com/Nexuby/NexDiscordLink/actions/workflows/build.yml)
+[![Java 17+](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://adoptium.net/)
+[![Minecraft 1.16.5+](https://img.shields.io/badge/Minecraft-1.16.5%2B-62b47a.svg)](#gereksinimler)
+[![Lisans: MIT](https://img.shields.io/badge/Lisans-MIT-blue.svg)](LICENSE)
 
 🌐 [English documentation](README.md)
 
-NexDiscordLink; Minecraft oyuncularının Discord hesaplarını güvenli biçimde eşleştiren, rol ve kullanıcı adı senkronizasyonu sağlayan, iki aşamalı doğrulama, sohbet köprüsü, ödül sistemi ve proxy ağı desteği sunan Spigot/Paper eklentisidir.
+> Güvenli Minecraft–Discord hesap eşleme, senkronizasyon, doğrulama, mesajlaşma ve ağ yönetimi tek eklentide.
 
-## Özellikler
+NexDiscordLink, Discord'u yalnızca sohbet aktarımı için değil Minecraft hesap yaşam döngüsünün tamamında kullanmak isteyen topluluklara yönelik kapsamlı bir Spigot/Paper entegrasyonudur. Güvenli hesap eşleme, TOTP doğrulama, IP değişikliği kontrolü, rol ve kullanıcı adı senkronizasyonu, yapılandırılabilir ödüller, ayrıntılı Discord mesajları, denetim kayıtları ve proxy ağı desteğini bir araya getirir.
 
-- Discord DM, etkileşimli modal veya slash komutuyla hesap eşleme
-- Türkçe ve İngilizce Minecraft komutları
-- Türkçe ve İngilizce Discord slash komutları
-- Tek Minecraft hesabı ↔ tek Discord hesabı politikası
-- Süreli, tek kullanımlık ve hız sınırlamalı eşleme kodları
-- TOTP tabanlı 2FA ve oyun içi QR haritası
-- IP değişikliğinde bağlı Discord hesabından giriş doğrulaması
-- 2FA veya Discord düğmesiyle güvenli eşleme kaldırma
-- Minecraft/Vault → Discord, Discord → Vault veya çift yönlü rol senkronizasyonu
-- Girişte, belirli aralıklarla veya yönetici komutuyla rol senkronizasyonu
-- Discord kullanıcı adı ve Minecraft kullanıcı adı senkronizasyonu
-- İlk eşleme, yeniden eşleme ve Discord rolüne özel ödüller
-- Çevrimiçi bağlı oyunculara periyodik maaş ödülü
-- Discord boost ödülleri
-- Çift yönlü Minecraft–Discord sohbet köprüsü
-- Katılma, ayrılma, ölüm ve başarım bildirimleri
-- Mesaj bazında Discord embed görünümü, kanal yönlendirme, görsel ve olay açma/kapatma ayarları
-- Hassas verileri maskeleyen Discord denetim kayıtları
-- İsteğe bağlı, izin listeli Discord konsol komutu
-- SQLite, MySQL ve ortak MySQL kullanan Velocity/Bungee ağı desteği
-- PlaceholderAPI entegrasyonu
-- Türkçe ve İngilizce dil dosyaları
-- Başlangıçta ve eklenti yenilemesinde otomatik config/lang doctor denetimi
+## Kısa bakış
+
+| Alan | Sunulan özellikler |
+| --- | --- |
+| Hesap eşleme | Discord DM, etkileşimli modal ve çift dilli slash komutları |
+| Hesap güvenliği | Tek kullanımlık kodlar, hız sınırı, TOTP 2FA, IP değişikliği kontrolü, güvenli eşleme kaldırma |
+| Senkronizasyon | Bağlı rolü, Vault grupları, Discord rolleri, kullanıcı adları, ban, zamanlanmış ve manuel eşitleme |
+| Ödüller | Eşleme, ilk eşleme/yeniden eşleme, rol, maaş ve boost ödülleri |
+| Mesajlaşma | Çift yönlü sohbet, olay bildirimleri, denetim embedleri, mesaj bazında Discord tasarımı |
+| Ağ desteği | SQLite, MySQL ve ortak MySQL kullanan Velocity/Bungee backend kurulumu |
+| Yönetim | Otomatik config/lang doctor, hassas veri maskeleme, PlaceholderAPI önbelleği |
+| Yerelleştirme | Türkçe ve İngilizce mesajlar, Minecraft alternatifleri ve Discord komutları |
+
+**Dokümantasyon:** [Kurulum](#kurulum) · [Minecraft komutları](#minecraft-komutları) · [Discord komutları](#discord-komutları) · [Mesaj özelleştirme](#discord-mesajlarını-özelleştirme) · [Güvenlik](#güvenlik) · [Sorun giderme](#sorun-giderme)
+
+## Öne çıkan özellikler
+
+### Eşleme ve hesap güvenliği
+
+- Discord DM, etkileşimli düğme/modal paneli veya Türkçe/İngilizce slash komutlarıyla hesap eşleyin.
+- Süreli, tek kullanımlık ve hız sınırlamalı kodlarla tek Minecraft hesabı ↔ tek Discord hesabı politikasını uygulayın.
+- Authenticator kurulumu için oyun içi QR haritası dahil TOTP tabanlı 2FA kullanın.
+- Değişen ağ adreslerini özel Discord doğrulama düğmesiyle kontrol edin.
+- Eşleme kaldırmadan önce TOTP veya hesaba bağlı, kısa süreli Discord onayı isteyin.
+
+### Senkronizasyon ve ödüller
+
+- Bağlı rolünü, Vault gruplarını, Discord rollerini, Minecraft adlarını, Discord takma adlarını ve banları senkronize edin.
+- Minecraft → Discord, Discord → Minecraft veya çift yönlü grup/rol eşitleme yönünü seçin.
+- Senkronizasyonu girişte, belirli aralıklarla veya yönetici komutuyla anında çalıştırın.
+- Konsol komutlarıyla ilk eşleme, yeniden eşleme, Discord rolü, periyodik maaş ve boost ödüllerini birleştirin.
+
+### Mesajlaşma ve yönetim
+
+- Webhook avatar desteği ve varsayılan olarak kapalı mention çözümlemeyle sohbeti çift yönlü aktarın.
+- Katılma, ayrılma, ölüm, başarım, profil, güvenlik, eşleme ve denetim embedleri yayımlayın.
+- Her Discord mesajının kanalını, metnini, rengini, yazarını, küçük/büyük görselini, footer'ını, zaman damgasını ve düğmelerini özelleştirin.
+- Token veya parola göstermeden başlangıçta ve eklenti yenilemesinde otomatik config/lang doctor çalıştırın.
+- Maskelenmiş denetim kayıtları, korumalı Discord konsol komutu ve önbellekli PlaceholderAPI değerlerini kullanın.
+- SQLite ile tek sunucuya veya ortak MySQL ile Velocity/Bungee backend ağına kurun.
 
 ## Gereksinimler
 

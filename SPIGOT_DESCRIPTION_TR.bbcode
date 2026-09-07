@@ -1,0 +1,148 @@
+[CENTER]
+[SIZE=7][B][COLOR=#2F80ED]NexDiscordLink[/COLOR][/B][/SIZE]
+[SIZE=4][B]Güvenli Minecraft–Discord hesap eşleme, senkronizasyon, 2FA, ödül, sohbet ve proxy ağı desteği.[/B][/SIZE]
+
+[COLOR=#2ECC71][B]Spigot/Paper 1.16.5+[/B][/COLOR] • [COLOR=#F39C12][B]Java 17+[/B][/COLOR] • [B]Türkçe ve İngilizce[/B]
+[/CENTER]
+
+[SIZE=5][B][COLOR=#2F80ED]Yalnızca bir sohbet köprüsü değil[/COLOR][/B][/SIZE]
+
+NexDiscordLink, Discord'u Minecraft hesap sisteminin tamamına bağlar. Oyuncular hesaplarını güvenli biçimde eşleyebilir, TOTP tabanlı iki aşamalı doğrulamayla koruyabilir, değişen ağ adreslerini Discord üzerinden doğrulayabilir, rol ve kullanıcı adlarını senkronize edebilir, yapılandırılabilir ödüller alabilir ve çift yönlü sohbet köprüsünü kullanabilir.
+
+SQLite ile tek Spigot/Paper sunucusunda veya ortak MySQL ile Velocity/Bungee backend ağında çalışabilir.
+
+[SIZE=5][B][COLOR=#2F80ED]Hesap eşleme[/COLOR][/B][/SIZE]
+
+[LIST]
+[*]Discord DM, etkileşimli düğme/modal paneli veya slash komutuyla eşleme
+[*]Türkçe ve İngilizce Minecraft komutları ile Discord slash komutları
+[*]Tek Minecraft hesabı ↔ tek Discord hesabı politikası
+[*]Süreli ve tek kullanımlık eşleme kodları
+[*]Hız sınırına tabi doğrulama denemeleri
+[*]TOTP veya kısa süreli Discord onay düğmesiyle güvenli eşleme kaldırma
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Hesap güvenliği[/COLOR][/B][/SIZE]
+
+[LIST]
+[*]TOTP tabanlı iki aşamalı doğrulama
+[*]Authenticator kurulumu için oyun içi QR haritası
+[*]Oyuncunun ağ adresi değiştiğinde özel Discord doğrulaması
+[*]Saklanan TOTP anahtarları için AES-GCM şifreleme
+[*]IP adresleri için geri döndürülemeyen anahtarlı parmak izi
+[*]Denetim kayıtlarında IP, token, secret ve key değerlerini otomatik maskeleme
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Rol, kullanıcı adı ve ban senkronizasyonu[/COLOR][/B][/SIZE]
+
+[LIST]
+[*]Hesap eşlendiğinde Discord rolünü otomatik verme
+[*]Vault gruplarıyla Discord rollerini senkronize etme
+[*]Minecraft → Discord, Discord → Minecraft veya çift yönlü çalışma
+[*]Girişte, belirli aralıklarla veya yönetici komutuyla senkronizasyon
+[*]Minecraft adıyla Discord takma adını eşitleme
+[*]İsteğe bağlı ban senkronizasyonu
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Ödüller[/COLOR][/B][/SIZE]
+
+[LIST]
+[*]Yapılandırılabilir hesap eşleme ödülleri
+[*]Ayrı ilk eşleme ve yeniden eşleme ödülleri
+[*]Discord rollerine göre ek ödüller
+[*]Bağlı ve çevrimiçi oyunculara periyodik maaş
+[*]Discord sunucu boost ödülleri
+[*]Ekonomi, eşya, XP ve üçüncü taraf eklenti komutlarını birlikte çalıştırma
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Discord mesajları ve sohbet[/COLOR][/B][/SIZE]
+
+[LIST]
+[*]Çift yönlü Minecraft ↔ Discord sohbet köprüsü
+[*]İsteğe bağlı webhook adı ve Minecraft kafa avatarı
+[*]Katılma, ayrılma, ölüm ve başarım bildirimleri
+[*]Özelleştirilebilir profil, eşleme, güvenlik ve denetim embedleri
+[*]Her mesaj için ayrı kanal, başlık, açıklama, renk, yazar, küçük/büyük görsel, footer, zaman damgası ve düğme ayarları
+[*][ICODE]{player}[/ICODE], [ICODE]{uuid}[/ICODE], [ICODE]{message}[/ICODE] ve [ICODE]{advancement}[/ICODE] gibi yer tutucular
+[*]Aktarılan sohbette varsayılan olarak kapalı Discord mention çözümleme
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Otomatik Config Doctor ve Lang Doctor[/COLOR][/B][/SIZE]
+
+Komut kullanmak gerekmez. NexDiscordLink her başlangıçta ve eklenti yenilemesinde yapılandırmayı ve seçili dil dosyasını otomatik inceler.
+
+[LIST]
+[*]Geçersiz YAML, bilinmeyen ayar, eksik ayar ve yanlış değer türlerini bulur
+[*]Sayı aralıklarını, Discord kimliklerini, HTTP/HTTPS adreslerini, embed renklerini ve düğme stillerini denetler
+[*]Proxy/MySQL uyumluluğunu ve eksik özellik bağımlılıklarını kontrol eder
+[*]Eksik dil anahtarlarını ve bozuk yer tutucuları bulur
+[*]Bot tokenini, veritabanı parolasını veya webhook değerlerini konsola yazmaz
+[*]Konsola açık HATA, UYARI veya sağlıklı özeti verir
+[*]Dosyaları kendiliğinden değiştirmez ve eklentiyi tek başına kapatmaz
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Ağ ve depolama desteği[/COLOR][/B][/SIZE]
+
+[LIST]
+[*]Tek sunucular için SQLite
+[*]Tek sunucu veya ağ kurulumu için MySQL
+[*]Velocity/Bungee backend sunucuları arasında ortak MySQL eşleme sistemi
+[*]Tek bot node'u ve hafif worker backend'leri
+[*]Asenkron önbellek kullanan PlaceholderAPI entegrasyonu
+[*]İsteğe bağlı Vault entegrasyonu
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Komut örnekleri[/COLOR][/B][/SIZE]
+
+[B]Minecraft[/B]
+[LIST]
+[*][ICODE]/link[/ICODE] — alternatifler: [ICODE]/eşle[/ICODE], [ICODE]/hesapeşle[/ICODE], [ICODE]/esle[/ICODE], [ICODE]/hesapesle[/ICODE]
+[*][ICODE]/unlink[/ICODE] — hesap eşlemesini güvenli biçimde kaldırır
+[*][ICODE]/linkstatus[/ICODE] — hesap ve 2FA durumunu gösterir
+[*][ICODE]/linkreward[/ICODE] — eşleme ödüllerini gösterir
+[*][ICODE]/2fa setup|login|disable[/ICODE] — iki aşamalı doğrulamayı yönetir
+[*][ICODE]/nexdiscord status|reload|sync|resetreward[/ICODE] — yönetim komutları
+[/LIST]
+
+[B]Discord[/B]
+[LIST]
+[*][ICODE]/eşle[/ICODE] / [ICODE]/link[/ICODE]
+[*][ICODE]/hesap[/ICODE] / [ICODE]/profile[/ICODE]
+[*][ICODE]/eşlemeyi-kaldır[/ICODE] / [ICODE]/unlink[/ICODE]
+[*][ICODE]/yardım[/ICODE] / [ICODE]/help[/ICODE]
+[*][ICODE]/setup-link[/ICODE]
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Gereksinimler[/COLOR][/B][/SIZE]
+
+[LIST]
+[*]Java 17 veya üzeri
+[*]Spigot/Paper 1.16.5 veya üzeri
+[*]Gerekli privileged intent seçenekleri açılmış bir Discord botu
+[*]İsteğe bağlı: Vault ve uyumlu bir yetki eklentisi
+[*]İsteğe bağlı: PlaceholderAPI
+[*]Proxy modu için bütün backend sunucularının erişebildiği MySQL
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Hızlı kurulum[/COLOR][/B][/SIZE]
+
+[LIST=1]
+[*]JAR dosyasını sunucunun [ICODE]plugins[/ICODE] klasörüne yerleştirin.
+[*]Sunucuyu bir kez başlatın ve tamamen kapatın.
+[*]Bot tokenini, kanal kimliklerini ve rol kimliklerini yapılandırın.
+[*]Discord Developer Portal'da Server Members Intent ve Message Content Intent seçeneklerini açın.
+[*]Kullandığınız özelliklerin gerektirdiği bot izinlerini verin.
+[*]Sunucuyu başlatıp otomatik Doctor raporunu inceleyin.
+[*]Modal eşleme açıksa Discord üzerinde [ICODE]/setup-link[/ICODE] çalıştırın.
+[/LIST]
+
+[SIZE=5][B][COLOR=#2F80ED]Önemli güvenlik notu[/COLOR][/B][/SIZE]
+
+Canlı bot tokenini, veritabanı parolasını, webhook adresini, üretim yapılandırmasını veya [ICODE]secret.key[/ICODE] dosyasını paylaşmayın. İsteğe bağlı Discord konsol komutu varsayılan olarak kapalıdır ve açıldığında yalnızca izin listesine açıkça eklenen kök komutları çalıştırır.
+
+[CENTER]
+[SIZE=5][B][URL=https://github.com/Nexuby/NexDiscordLink]Dokümantasyon ve kaynak kodu[/URL][/B][/SIZE]
+[URL=https://github.com/Nexuby/NexDiscordLink/blob/main/README.md]English documentation[/URL] • [URL=https://github.com/Nexuby/NexDiscordLink/issues]Hata bildirimi[/URL]
+
+[B]Nexuby tarafından geliştirildi[/B]
+[/CENTER]

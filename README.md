@@ -1,36 +1,56 @@
 # NexDiscordLink
 
 [![Build](https://github.com/Nexuby/NexDiscordLink/actions/workflows/build.yml/badge.svg)](https://github.com/Nexuby/NexDiscordLink/actions/workflows/build.yml)
+[![Java 17+](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://adoptium.net/)
+[![Minecraft 1.16.5+](https://img.shields.io/badge/Minecraft-1.16.5%2B-62b47a.svg)](#requirements)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 🇹🇷 **Türk kullanıcılar:** [Türkçe dokümantasyon için buraya tıklayın.](README_TR.md)
 
-NexDiscordLink is a Spigot/Paper plugin that securely links Minecraft players to Discord accounts and provides role and nickname synchronization, two-factor authentication, a chat bridge, configurable rewards, auditing, and proxy-network support.
+> Secure Minecraft–Discord account linking, synchronization, authentication, messaging, and network-wide automation in one plugin.
 
-## Features
+NexDiscordLink is a production-oriented Spigot/Paper integration for communities that want Discord to be part of the Minecraft account lifecycle—not just another chat relay. It combines secure account linking, TOTP authentication, IP-change verification, role and nickname synchronization, configurable rewards, rich Discord messages, auditing, and shared-database proxy support.
 
-- Account linking through Discord DMs, an interactive modal, or slash commands
-- English and Turkish Minecraft commands
-- English and Turkish Discord slash commands
-- One Minecraft account ↔ one Discord account policy
-- Expiring, single-use, rate-limited link codes
-- TOTP two-factor authentication with an in-game QR map
-- Discord account verification when a player's IP address changes
-- Secure unlinking through TOTP or a Discord confirmation button
-- Minecraft/Vault → Discord, Discord → Vault, or bidirectional role synchronization
-- Role synchronization on join, on a schedule, or through an administrator command
-- Minecraft username to Discord nickname synchronization
-- First-link, relink, and Discord-role-specific rewards
-- Recurring salary rewards for online linked players
-- Discord boost rewards
-- Bidirectional Minecraft–Discord chat bridge
-- Join, quit, death, and advancement notifications
-- Per-message Discord embed styling, channel routing, images, and event toggles
-- Discord audit logs with automatic sensitive-data redaction
-- Optional allowlisted Discord console command
-- SQLite, MySQL, and shared-MySQL Velocity/Bungee network support
-- PlaceholderAPI integration
-- English and Turkish language files
-- Automatic configuration and language doctors on startup and plugin reload
+## At a glance
+
+| Area | Included |
+| --- | --- |
+| Account linking | Discord DM, interactive modal, and bilingual slash commands |
+| Account security | Single-use codes, rate limits, TOTP 2FA, IP-change verification, secure unlink approval |
+| Synchronization | Linked role, Vault groups, Discord roles, nicknames, bans, scheduled and manual sync |
+| Engagement | Link rewards, first-link/relink rewards, role rewards, salary, boost rewards |
+| Messaging | Two-way chat, event notifications, audit embeds, per-message Discord styling |
+| Networks | SQLite, MySQL, and shared-MySQL Velocity/Bungee backend deployments |
+| Operations | Automatic config/lang doctors, sensitive-data redaction, PlaceholderAPI cache |
+| Localization | English and Turkish messages, Minecraft aliases, and Discord commands |
+
+**Documentation:** [Installation](#installation) · [Minecraft commands](#minecraft-commands) · [Discord commands](#discord-commands) · [Message customization](#discord-message-customization) · [Security](#security) · [Troubleshooting](#troubleshooting)
+
+## Feature highlights
+
+### Linking and account security
+
+- Link through Discord DMs, an interactive button/modal panel, or English/Turkish slash commands.
+- Enforce a one-Minecraft-account ↔ one-Discord-account policy with expiring, single-use, rate-limited codes.
+- Protect accounts with TOTP 2FA, including an in-game QR map for authenticator setup.
+- Challenge changed network addresses through a private Discord verification button.
+- Require TOTP or a short-lived, account-bound Discord approval before unlinking.
+
+### Synchronization and rewards
+
+- Synchronize linked roles, Vault groups, Discord roles, Minecraft names, Discord nicknames, and bans.
+- Choose Minecraft → Discord, Discord → Minecraft, or bidirectional group/role synchronization.
+- Run synchronization on join, on a schedule, or immediately through an administrator command.
+- Combine first-link, relink, Discord-role, recurring salary, and server-boost rewards using console commands.
+
+### Messaging and operations
+
+- Bridge chat in both directions with webhook avatar support and mention parsing disabled by default.
+- Publish join, quit, death, advancement, profile, security, linking, and audit embeds.
+- Customize each Discord message's channel, text, color, author, thumbnail, image, footer, timestamp, and buttons.
+- Run automatic config and language doctors on startup and plugin reload—without exposing tokens or passwords.
+- Use redacted audit logs, a guarded Discord console command, and cached PlaceholderAPI values.
+- Deploy on one server with SQLite or across Velocity/Bungee backends with shared MySQL.
 
 ## Requirements
 
