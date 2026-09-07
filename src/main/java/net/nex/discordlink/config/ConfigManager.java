@@ -19,7 +19,8 @@ public class ConfigManager {
     }
 
     public String getLanguage() {
-        return config.getString("settings.language", "en");
+        Object value = config.get("settings.language");
+        return value instanceof String language && !language.isBlank() ? language : "en";
     }
 
     public String getBotToken() {

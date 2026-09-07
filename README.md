@@ -30,6 +30,7 @@ NexDiscordLink is a Spigot/Paper plugin that securely links Minecraft players to
 - SQLite, MySQL, and shared-MySQL Velocity/Bungee network support
 - PlaceholderAPI integration
 - English and Turkish language files
+- Automatic configuration and language doctors on startup and plugin reload
 
 ## Requirements
 
@@ -360,6 +361,14 @@ Do not use `/reload` or similar global reload commands for JAR updates. NexDisco
 Existing language files do not need to be deleted. New message keys automatically fall back to the current defaults bundled in the JAR.
 
 ## Troubleshooting
+
+### Automatic config and language doctors
+
+NexDiscordLink automatically inspects `config.yml` and the selected language file during every startup and `/nexdiscord reload`. No doctor command is required. Results are printed to the server console as `ERROR`, `WARNING`, or healthy summaries.
+
+The configuration doctor checks YAML readability, missing and unknown settings, value types and ranges, bot configuration without exposing the token, Discord IDs, HTTP/HTTPS URLs, embed colors, button styles, proxy/MySQL compatibility, chat destinations, and feature dependencies. The language doctor checks YAML readability, missing and unknown keys, scalar/list type parity, English fallback availability, and missing or unexpected placeholders such as `{player}`.
+
+Errors and warnings are diagnostic: the doctor does not rewrite files or disable the plugin by itself. Settings omitted from an older configuration continue to use bundled defaults and are reported as warnings so they can be copied into the server configuration when customization is needed.
 
 - **The bot does not start:** Check the token, privileged intents, and network access.
 - **Slash commands are missing:** Confirm that the plugin started successfully and that the token belongs to the expected Discord application.

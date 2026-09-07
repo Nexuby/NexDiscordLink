@@ -41,6 +41,7 @@ public class NexDiscordLink extends JavaPlugin {
 
         languageManager.sendConsoleMessage("console.loading_config");
         languageManager.sendConsoleMessage("console.loading_lang");
+        runDoctors();
 
         // Connect to Database
         if (!setupDatabase()) {
@@ -152,6 +153,7 @@ public class NexDiscordLink extends JavaPlugin {
 
         configManager.loadConfig();
         languageManager.loadLanguages();
+        runDoctors();
 
         if (databaseManager != null) {
             databaseManager.close();
@@ -178,6 +180,14 @@ public class NexDiscordLink extends JavaPlugin {
         long interval = minutes * 20L * 60L;
         rewardTask = new net.nex.discordlink.utils.RewardScheduler(this)
                 .runTaskTimer(this, interval, interval);
+    }
+
+    private void runDoctors() {
+        try {
+            new net.nex.discordlink.utils.DoctorService(this).runAutomaticChecks();
+        } catch (RuntimeException exception) {
+            getLogger().warning("Automatic configuration doctor could not complete: " + exception.getClass().getSimpleName());
+        }
     }
 
     private void scheduleRoleSync() {

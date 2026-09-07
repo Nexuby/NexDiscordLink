@@ -30,6 +30,7 @@ NexDiscordLink; Minecraft oyuncularının Discord hesaplarını güvenli biçimd
 - SQLite, MySQL ve ortak MySQL kullanan Velocity/Bungee ağı desteği
 - PlaceholderAPI entegrasyonu
 - Türkçe ve İngilizce dil dosyaları
+- Başlangıçta ve eklenti yenilemesinde otomatik config/lang doctor denetimi
 
 ## Gereksinimler
 
@@ -361,6 +362,14 @@ JAR güncellemelerinde `/reload` veya benzeri genel sunucu yenileme komutların�
 Mevcut dil dosyaları silinmek zorunda değildir; yeni mesaj anahtarları JAR içindeki güncel varsayılanlardan otomatik alınır.
 
 ## Sorun giderme
+
+### Otomatik config ve lang doctor
+
+NexDiscordLink her başlangıçta ve `/nexdiscord reload` sırasında `config.yml` ile seçili dil dosyasını otomatik inceler. Doctor komutu kullanmak gerekmez. Sonuçlar sunucu konsoluna `HATA`, `UYARI` veya sağlıklı özeti olarak yazılır.
+
+Config doctor; YAML okunabilirliğini, eksik ve bilinmeyen ayarları, değer türlerini ve aralıklarını, tokeni göstermeden bot yapılandırmasını, Discord kimliklerini, HTTP/HTTPS adreslerini, embed renklerini, düğme stillerini, proxy/MySQL uyumluluğunu, sohbet hedeflerini ve özellik bağımlılıklarını denetler. Lang doctor; YAML okunabilirliğini, eksik ve bilinmeyen anahtarları, metin/liste tür eşitliğini, İngilizce geri dönüş dosyasını ve `{player}` gibi eksik veya beklenmeyen yer tutucuları kontrol eder.
+
+Hata ve uyarılar tanı amaçlıdır; doctor dosyaları kendiliğinden değiştirmez ve eklentiyi tek başına kapatmaz. Eski yapılandırmalarda bulunmayan ayarlar eklenti içi varsayılanları kullanmaya devam eder ve gerektiğinde sunucu yapılandırmasına eklenebilmeleri için uyarı olarak gösterilir.
 
 - **Bot başlamıyor:** Tokeni, privileged intent seçeneklerini ve ağ erişimini kontrol edin.
 - **Slash komutları görünmüyor:** Önce eklentinin başarıyla başladığını ve botun doğru uygulama hesabına ait olduğunu doğrulayın.

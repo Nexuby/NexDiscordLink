@@ -52,6 +52,27 @@ public final class DiscordMessageFormatter {
         };
     }
 
+    public static boolean isValidColor(String value) {
+        if (value == null || value.isBlank()) return true;
+        String normalized = value.trim().toUpperCase(Locale.ROOT);
+        if (normalized.matches("#?[0-9A-F]{6}")) return true;
+        if (normalized.matches("\\d{1,3}\\s*,\\s*\\d{1,3}\\s*,\\s*\\d{1,3}")) {
+            String[] parts = normalized.split(",");
+            try {
+                return Integer.parseInt(parts[0].trim()) <= 255
+                        && Integer.parseInt(parts[1].trim()) <= 255
+                        && Integer.parseInt(parts[2].trim()) <= 255;
+            } catch (NumberFormatException ignored) {
+                return false;
+            }
+        }
+        return switch (normalized) {
+            case "BLACK", "BLUE", "CYAN", "DARK_GRAY", "DARK_GREY", "GRAY", "GREY", "GREEN",
+                    "LIGHT_GRAY", "LIGHT_GREY", "MAGENTA", "PURPLE", "ORANGE", "PINK", "RED", "WHITE", "YELLOW" -> true;
+            default -> false;
+        };
+    }
+
     private static Color parseHexOrRgb(String value, Color fallback) {
         try {
             if (value.matches("#?[0-9A-F]{6}")) {
