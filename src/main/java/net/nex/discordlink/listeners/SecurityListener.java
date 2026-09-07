@@ -69,16 +69,31 @@ public class SecurityListener implements Listener {
             // Send DM
             if (plugin.getDiscordBot() != null && plugin.getDiscordBot().getJda() != null) {
                 plugin.getDiscordBot().getJda().retrieveUserById(discordId).queue(user -> {
-                    EmbedBuilder embed = new EmbedBuilder();
-                    embed.setTitle(plugin.getLanguageManager().getMessage("security.dm_verify_title"));
-                    embed.setDescription(plugin.getLanguageManager().getMessage("security.dm_verify_desc", "ip", currentIp));
-                    embed.setColor(Color.RED);
+                    EmbedBuilder embed = plugin.getDiscordMessageManager().createEmbed(
+                            "security-login",
+                            "security.dm_verify_title",
+                            "security.dm_verify_desc",
+                            Color.RED,
+                            player.getName(),
+                            player.getUniqueId(),
+                            "ip", currentIp
+                    );
 
                     user.openPrivateChannel().queue(channel -> {
                         channel.sendMessageEmbeds(embed.build())
-                                .setActionRow(Button.success(
+                                .setActionRow(Button.of(
+                                        plugin.getDiscordMessageManager().resolveButtonStyle(
+                                                "security-login",
+                                                net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle.SUCCESS
+                                        ),
                                         "verify_login:" + player.getUniqueId() + ":" + verificationToken,
-                                        plugin.getLanguageManager().getMessage("security.dm_verify_button")
+                                        plugin.getDiscordMessageManager().resolveText(
+                                                "security-login",
+                                                "button-label",
+                                                "security.dm_verify_button",
+                                                80,
+                                                "player", player.getName()
+                                        )
                                 ))
                                 .queue(
                                         success -> {},

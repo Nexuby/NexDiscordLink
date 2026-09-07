@@ -24,6 +24,7 @@ NexDiscordLink; Minecraft oyuncularının Discord hesaplarını güvenli biçimd
 - Discord boost ödülleri
 - Çift yönlü Minecraft–Discord sohbet köprüsü
 - Katılma, ayrılma, ölüm ve başarım bildirimleri
+- Mesaj bazında Discord embed görünümü, kanal yönlendirme, görsel ve olay açma/kapatma ayarları
 - Hassas verileri maskeleyen Discord denetim kayıtları
 - İsteğe bağlı, izin listeli Discord konsol komutu
 - SQLite, MySQL ve ortak MySQL kullanan Velocity/Bungee ağı desteği
@@ -217,6 +218,46 @@ rewards:
 - `relink-commands`: Sonraki ödüllü eşlemelerde çalışır.
 - `discord-role-commands`: Oyuncunun sahip olduğu Discord rolüne göre ek komut çalıştırır.
 - `limit: 0`: Ödül alma sınırını kaldırır.
+
+## Discord mesajlarını özelleştirme
+
+Mesaj metinleri `plugins/NexDiscordLink/lang/messages_tr.yml` ve `messages_en.yml` dosyalarından değiştirilmeye devam eder. `config.yml` içindeki `discord-messages` bölümü; katılma, ayrılma, ölüm, başarım, eşleme paneli, giriş güvenliği, profil, denetim kaydı ve Minecraft'tan Discord'a sohbet mesajlarının görünümünü ve kanalını yönetir.
+
+```yaml
+discord-messages:
+  defaults:
+    timestamp: true
+    footer:
+      enabled: true
+      text: "oyna.ornek.net"
+      icon-url: "https://ornek.net/icon.png"
+
+  events:
+    join:
+      enabled: true
+      channel-id: "" # Boşsa channels.log-channel-id kullanılır
+      title: "Sunucuya hoş geldin"
+      description: "**{player}** aramıza katıldı!"
+      color: "#2F80ED"
+      author:
+        enabled: true
+        text: "{player}"
+        icon-url: "https://mc-heads.net/avatar/{player}"
+      thumbnail:
+        enabled: true
+        url: "https://mc-heads.net/avatar/{player}"
+      image:
+        enabled: false
+        url: "https://ornek.net/karsilama.png"
+```
+
+Renkler `GREEN` gibi isimle, `#2F80ED` gibi HEX koduyla veya `47, 128, 237` biçiminde RGB olarak yazılabilir. Yalnızca HTTP/HTTPS görsel adresleri kabul edilir. Geçersiz renklerde olayın yerleşik rengi kullanılır, geçersiz görsel adresleri yok sayılır ve metinler Discord alan sınırlarına güvenli biçimde kısaltılır.
+
+Ortak yer tutucular `{player}` ve `{uuid}` değerleridir. Ölüm mesajında `{death_message}`, başarımda `{advancement}`, özel giriş doğrulama mesajında `{ip}`, sohbet köprüsünde `{message}` kullanılabilir. Denetim şablonlarının başlık veya açıklamasında `{event}`, `{actor}` ve `{detail}` kullanılabilir.
+
+Boş bırakılan `title`, `description`, düğme etiketi ve alan etiketleri etkin dil dosyasındaki metni korur. Her olay ayrı bir `channel-id` değerine yönlendirilebilir; boş değer mevcut log kanalı ayarını kullanır. Webhook dahil bütün sohbet mesajlarında Discord mention çözümleme güvenlik amacıyla kapalıdır.
+
+Yapılandırma ve dil değişikliklerini `/nexdiscord reload` veya `/discordyönet yenile` ile uygulayın. Daha önce yayımlanan eşleme paneli Discord üzerinde geriye dönük değiştirilmediği için panel görünümünü değiştirdikten sonra `/setup-link` komutunu yeniden çalıştırın.
 
 ## PlaceholderAPI
 

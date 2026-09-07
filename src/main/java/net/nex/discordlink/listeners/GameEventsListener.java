@@ -29,10 +29,12 @@ public class GameEventsListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        String channelId = plugin.getConfig().getString("channels.log-channel-id");
-        if (channelId == null) return;
+        if (!plugin.getDiscordMessageManager().isEnabled("events.join", true)) return;
+        String channelId = plugin.getDiscordMessageManager().getChannelId("events.join", "channels.log-channel-id");
+        if (channelId.isEmpty()) return;
 
         sendEmbed(channelId, embedUtils.createEmbed(
+                "events.join",
                 event.getPlayer(),
                 "events.join_title",
                 "events.join_desc",
@@ -43,10 +45,12 @@ public class GameEventsListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        String channelId = plugin.getConfig().getString("channels.log-channel-id");
-        if (channelId == null) return;
+        if (!plugin.getDiscordMessageManager().isEnabled("events.quit", true)) return;
+        String channelId = plugin.getDiscordMessageManager().getChannelId("events.quit", "channels.log-channel-id");
+        if (channelId.isEmpty()) return;
 
         sendEmbed(channelId, embedUtils.createEmbed(
+                "events.quit",
                 event.getPlayer(),
                 "events.quit_title",
                 "events.quit_desc",
@@ -57,13 +61,15 @@ public class GameEventsListener implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        String channelId = plugin.getConfig().getString("channels.log-channel-id");
-        if (channelId == null) return;
+        if (!plugin.getDiscordMessageManager().isEnabled("events.death", true)) return;
+        String channelId = plugin.getDiscordMessageManager().getChannelId("events.death", "channels.log-channel-id");
+        if (channelId.isEmpty()) return;
 
         String deathMessage = event.getDeathMessage();
         if (deathMessage == null) deathMessage = event.getEntity().getName() + " died";
 
         sendEmbed(channelId, embedUtils.createEmbed(
+                "events.death",
                 event.getEntity(),
                 "events.death_title",
                 "events.death_desc",
@@ -74,8 +80,9 @@ public class GameEventsListener implements Listener {
 
     @EventHandler
     public void onAdvancement(PlayerAdvancementDoneEvent event) {
-        String channelId = plugin.getConfig().getString("channels.log-channel-id");
-        if (channelId == null) return;
+        if (!plugin.getDiscordMessageManager().isEnabled("events.advancement", true)) return;
+        String channelId = plugin.getDiscordMessageManager().getChannelId("events.advancement", "channels.log-channel-id");
+        if (channelId.isEmpty()) return;
 
         // Filter out recipes
         if (event.getAdvancement().getKey().getKey().startsWith("recipes/")) return;
@@ -85,6 +92,7 @@ public class GameEventsListener implements Listener {
         // For now, using key
 
         sendEmbed(channelId, embedUtils.createEmbed(
+                "events.advancement",
                 event.getPlayer(),
                 "events.advancement_title",
                 "events.advancement_desc",

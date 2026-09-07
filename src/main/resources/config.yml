@@ -118,3 +118,134 @@ chat-bridge:
   channel-id: "YOUR_CHAT_CHANNEL_ID"
   webhook-url: "" # Optional: If set, uses webhook for Game -> Discord (Better visuals)
   discord-to-game-format: "&8[&bDiscord&8] &f{user}: &7{message}"
+
+# Discord embed and Game -> Discord message customization.
+# Empty title/description values use the active language file.
+# Colors accept names, #RRGGBB, or "R, G, B". Image URLs must use http/https.
+# Supported common placeholders: {player}, {uuid}. Event-specific placeholders are shown below.
+discord-messages:
+  defaults:
+    color: "" # Empty keeps each message's built-in color
+    timestamp: true
+    author:
+      enabled: false
+      text: "{player}"
+      url: ""
+      icon-url: "https://mc-heads.net/avatar/{player}"
+    thumbnail:
+      enabled: false
+      url: "https://mc-heads.net/avatar/{player}"
+    image:
+      enabled: false
+      url: ""
+    footer:
+      enabled: false
+      text: "NexDiscordLink"
+      icon-url: ""
+
+  events:
+    join:
+      enabled: true
+      channel-id: "" # Empty uses channels.log-channel-id
+      title: ""
+      description: "" # {player}, {uuid}
+      color: "#2ECC71"
+      author:
+        enabled: true
+      thumbnail:
+        enabled: true
+    quit:
+      enabled: true
+      channel-id: ""
+      title: ""
+      description: "" # {player}, {uuid}
+      color: "#E74C3C"
+      author:
+        enabled: true
+      thumbnail:
+        enabled: true
+    death:
+      enabled: true
+      channel-id: ""
+      title: ""
+      description: "" # {player}, {uuid}, {death_message}
+      color: "#000000"
+      author:
+        enabled: true
+      thumbnail:
+        enabled: true
+    advancement:
+      enabled: true
+      channel-id: ""
+      title: ""
+      description: "" # {player}, {uuid}, {advancement}
+      color: "#F1C40F"
+      author:
+        enabled: true
+      thumbnail:
+        enabled: true
+
+  link-panel:
+    enabled: true
+    channel-id: "" # Empty uses link-system.modal.channel-id
+    title: ""
+    description: ""
+    button-label: "" # Empty uses link-system.modal.button-label
+    button-style: "" # Empty uses link-system.modal.button-style
+    color: "#2ECC71"
+    timestamp: false
+    footer:
+      enabled: true
+      text: "" # Empty uses discord.modal.embed.footer from the active language file
+      icon-url: ""
+
+  security-login:
+    title: ""
+    description: "" # {player}, {uuid}, {ip}
+    button-label: ""
+    button-style: "SUCCESS" # PRIMARY, SECONDARY, SUCCESS, DANGER
+    color: "#E74C3C"
+    author:
+      enabled: true
+    thumbnail:
+      enabled: true
+
+  unlink-confirmation:
+    content: "" # {player}, {uuid}; empty uses the active language file
+    button-label: ""
+    button-style: "DANGER" # PRIMARY, SECONDARY, SUCCESS, DANGER
+
+  profile:
+    title: ""
+    color: "#00FFFF"
+    field-player: ""
+    field-uuid: ""
+    field-status: ""
+    author:
+      enabled: true
+    thumbnail:
+      enabled: true
+
+  audit:
+    enabled: true
+    channel-id: "" # Empty uses audit-log.channel-id, then channels.log-channel-id
+    title: ""
+    field-event: ""
+    field-actor: ""
+    field-detail: ""
+    event-colors:
+      account_linked: "#2ECC71"
+      account_unlinked: "#F1C40F"
+      two_factor_enabled: "#3498DB"
+      two_factor_disabled: "#E67E22"
+      two_factor_verified: "#2ECC71"
+      verification_failed: "#E74C3C"
+      ip_challenge: "#E74C3C"
+      ip_verified: "#2ECC71"
+      role_sync: "#9B59B6"
+      admin_action: "#34495E"
+
+  chat:
+    minecraft-to-discord-format: "**{player}**: {message}"
+    webhook-username: "{player}"
+    webhook-avatar-url: "https://mc-heads.net/avatar/{player}"

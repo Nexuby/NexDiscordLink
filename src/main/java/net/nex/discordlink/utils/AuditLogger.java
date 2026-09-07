@@ -4,7 +4,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.nex.discordlink.NexDiscordLink;
 
 import java.awt.Color;
-import java.time.Instant;
 
 public class AuditLogger {
 
@@ -19,23 +18,45 @@ public class AuditLogger {
 
         String safeActor = AuditLogSanitizer.sanitize(actor);
         String safeDetail = AuditLogSanitizer.sanitize(detail);
-        EmbedBuilder embed = new EmbedBuilder()
-                .setTitle(plugin.getLanguageManager().getMessage("audit.title"))
-                .setColor(event.color)
-                .addField(
-                        plugin.getLanguageManager().getMessage("audit.field_event"),
-                        plugin.getLanguageManager().getMessage("audit.event." + event.key),
-                        true
-                )
-                .addField(plugin.getLanguageManager().getMessage("audit.field_actor"), safeActor, true)
-                .addField(plugin.getLanguageManager().getMessage("audit.field_detail"), safeDetail, false)
-                .setTimestamp(Instant.now());
+        Color color = plugin.getDiscordMessageManager().resolveColor(
+                "discord-messages.audit.event-colors." + event.key,
+                event.color
+        );
+        EmbedBuilder embed = plugin.getDiscordMessageManager().createEmbed(
+                "audit",
+                "audit.title",
+                null,
+                color,
+                null,
+                null,
+                "event", plugin.getLanguageManager().getMessage("audit.event." + event.key),
+                "actor", safeActor,
+                "detail", safeDetail
+        );
+        embed.addField(
+                plugin.getDiscordMessageManager().resolveText("audit", "field-event", "audit.field_event", 256),
+                plugin.getDiscordMessageManager().format(plugin.getLanguageManager().getMessage("audit.event." + event.key), 1024),
+                true
+        );
+        embed.addField(
+                plugin.getDiscordMessageManager().resolveText("audit", "field-actor", "audit.field_actor", 256),
+                plugin.getDiscordMessageManager().format(safeActor, 1024),
+                true
+        );
+        embed.addField(
+                plugin.getDiscordMessageManager().resolveText("audit", "field-detail", "audit.field_detail", 256),
+                plugin.getDiscordMessageManager().format(safeDetail, 1024),
+                false
+        );
 
-        String channelId = plugin.getConfig().getString("audit-log.channel-id", "").trim();
+        String channelId = plugin.getDiscordMessageManager().getChannelId("audit", "audit-log.channel-id");
         if (channelId.isEmpty()) {
             channelId = plugin.getConfig().getString("channels.log-channel-id", "").trim();
         }
-        if (!channelId.isEmpty() && !channelId.startsWith("123456") && plugin.getDiscordBot() != null) {
+        if (plugin.getDiscordMessageManager().isEnabled("audit", true)
+                && !channelId.isEmpty()
+                && !channelId.startsWith("123456")
+                && plugin.getDiscordBot() != null) {
             plugin.getDiscordBot().sendEmbed(channelId, embed.build());
         }
 

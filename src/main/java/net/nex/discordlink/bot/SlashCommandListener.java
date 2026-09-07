@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.awt.Color;
-import java.time.Instant;
 import java.util.UUID;
 
 public class SlashCommandListener extends ListenerAdapter {
@@ -103,18 +102,29 @@ public class SlashCommandListener extends ListenerAdapter {
                 ? plugin.getLanguageManager().getMessage("discord.command.profile.embed.status_online")
                 : plugin.getLanguageManager().getMessage("discord.command.profile.embed.status_offline");
 
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(plugin.getLanguageManager().getMessage("discord.command.profile.embed.title"));
-        embed.setColor(Color.CYAN);
-
-        embed.addField(plugin.getLanguageManager().getMessage("discord.command.profile.embed.field_player"), playerName, true);
-        embed.addField(plugin.getLanguageManager().getMessage("discord.command.profile.embed.field_uuid"), uuid.toString(), true);
-        embed.addField(plugin.getLanguageManager().getMessage("discord.command.profile.embed.field_status"), status, true);
-
-        String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
-        embed.setThumbnail(avatarUrl);
-        embed.setAuthor(playerName, null, avatarUrl);
-        embed.setTimestamp(Instant.now());
+        EmbedBuilder embed = plugin.getDiscordMessageManager().createEmbed(
+                "profile",
+                "discord.command.profile.embed.title",
+                null,
+                Color.CYAN,
+                playerName,
+                uuid
+        );
+        embed.addField(
+                plugin.getDiscordMessageManager().resolveText("profile", "field-player", "discord.command.profile.embed.field_player", 256),
+                plugin.getDiscordMessageManager().format(playerName, 1024),
+                true
+        );
+        embed.addField(
+                plugin.getDiscordMessageManager().resolveText("profile", "field-uuid", "discord.command.profile.embed.field_uuid", 256),
+                uuid.toString(),
+                true
+        );
+        embed.addField(
+                plugin.getDiscordMessageManager().resolveText("profile", "field-status", "discord.command.profile.embed.field_status", 256),
+                plugin.getDiscordMessageManager().format(status, 1024),
+                true
+        );
 
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }

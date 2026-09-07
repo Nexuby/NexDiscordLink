@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.nex.discordlink.NexDiscordLink;
 
 import java.awt.Color;
+
 public class ModalLinkListener extends ListenerAdapter {
 
     private final NexDiscordLink plugin;
@@ -42,7 +43,12 @@ public class ModalLinkListener extends ListenerAdapter {
                 return;
             }
 
-            String channelId = plugin.getConfig().getString("link-system.modal.channel-id");
+            if (!plugin.getDiscordMessageManager().isEnabled("link-panel", true)) {
+                event.reply(plugin.getLanguageManager().getMessage("discord.modal.disabled")).setEphemeral(true).queue();
+                return;
+            }
+
+            String channelId = plugin.getDiscordMessageManager().getChannelId("link-panel", "link-system.modal.channel-id");
             TextChannel channel = null;
 
             if (channelId != null && !channelId.isEmpty()) {
@@ -53,17 +59,29 @@ public class ModalLinkListener extends ListenerAdapter {
                 channel = event.getChannel().asTextChannel();
             }
 
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.setTitle(plugin.getLanguageManager().getMessage("discord.modal.embed.title"));
-            embed.setDescription(plugin.getLanguageManager().getMessage("discord.modal.embed.description"));
-            embed.setFooter(plugin.getLanguageManager().getMessage("discord.modal.embed.footer"));
-            embed.setColor(Color.GREEN);
+            EmbedBuilder embed = plugin.getDiscordMessageManager().createEmbed(
+                    "link-panel",
+                    "discord.modal.embed.title",
+                    "discord.modal.embed.description",
+                    Color.GREEN,
+                    null,
+                    null
+            );
+            plugin.getDiscordMessageManager().setFooter(embed, "link-panel", "discord.modal.embed.footer");
 
-            String label = plugin.getConfig().getString("link-system.modal.button-label", "Link Account");
-            String styleStr = plugin.getConfig().getString("link-system.modal.button-style", "PRIMARY");
+            String label = plugin.getConfig().getString("discord-messages.link-panel.button-label", "").trim();
+            if (label.isEmpty()) {
+                label = plugin.getConfig().getString("link-system.modal.button-label", "Link Account");
+            }
+            label = plugin.getDiscordMessageManager().format(label, 80);
+
+            String styleStr = plugin.getConfig().getString("discord-messages.link-panel.button-style", "").trim();
+            if (styleStr.isEmpty()) {
+                styleStr = plugin.getConfig().getString("link-system.modal.button-style", "PRIMARY");
+            }
             ButtonStyle style;
             try {
-                style = ButtonStyle.valueOf(styleStr.toUpperCase());
+                style = ButtonStyle.valueOf(styleStr.toUpperCase(java.util.Locale.ROOT));
             } catch (IllegalArgumentException e) {
                 style = ButtonStyle.PRIMARY;
                 plugin.getLogger().warning("Invalid button style '" + styleStr + "' in config, defaulting to PRIMARY.");

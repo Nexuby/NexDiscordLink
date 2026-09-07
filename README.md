@@ -24,6 +24,7 @@ NexDiscordLink is a Spigot/Paper plugin that securely links Minecraft players to
 - Discord boost rewards
 - Bidirectional Minecraft–Discord chat bridge
 - Join, quit, death, and advancement notifications
+- Per-message Discord embed styling, channel routing, images, and event toggles
 - Discord audit logs with automatic sensitive-data redaction
 - Optional allowlisted Discord console command
 - SQLite, MySQL, and shared-MySQL Velocity/Bungee network support
@@ -216,6 +217,46 @@ rewards:
 - `relink-commands`: Runs for later rewarded links.
 - `discord-role-commands`: Adds commands based on the player's Discord roles.
 - `limit: 0`: Removes the reward-claim limit.
+
+## Discord message customization
+
+Text remains editable in `plugins/NexDiscordLink/lang/messages_en.yml` and `messages_tr.yml`. The `discord-messages` section in `config.yml` controls presentation and routing for join, quit, death, advancement, link-panel, login-security, profile, audit, and Minecraft-to-Discord chat messages.
+
+```yaml
+discord-messages:
+  defaults:
+    timestamp: true
+    footer:
+      enabled: true
+      text: "play.example.net"
+      icon-url: "https://example.net/icon.png"
+
+  events:
+    join:
+      enabled: true
+      channel-id: "" # Empty uses channels.log-channel-id
+      title: "Welcome to the server"
+      description: "**{player}** joined us!"
+      color: "#2F80ED"
+      author:
+        enabled: true
+        text: "{player}"
+        icon-url: "https://mc-heads.net/avatar/{player}"
+      thumbnail:
+        enabled: true
+        url: "https://mc-heads.net/avatar/{player}"
+      image:
+        enabled: false
+        url: "https://example.net/welcome.png"
+```
+
+Colors accept a name such as `GREEN`, a hexadecimal value such as `#2F80ED`, or an RGB value such as `47, 128, 237`. Only HTTP/HTTPS image URLs are accepted. Invalid colors fall back to the built-in event color, invalid image URLs are ignored, and text is safely truncated to Discord's field limits.
+
+Common placeholders are `{player}` and `{uuid}`. Additional placeholders are `{death_message}` for deaths, `{advancement}` for advancements, `{ip}` for the private login-verification message, and `{message}` for the chat bridge. Audit templates may use `{event}`, `{actor}`, and `{detail}` in their title or description.
+
+An empty `title`, `description`, button label, or field label keeps the text from the active language file. Each event can be routed to a separate `channel-id`; an empty value uses the existing log-channel setting. Chat messages always disable Discord mention parsing, including webhook delivery.
+
+Apply configuration and language changes with `/nexdiscord reload` (or `/discordyönet yenile`). Re-run `/setup-link` after changing the link-panel appearance because previously published Discord messages are not edited retroactively.
 
 ## PlaceholderAPI
 

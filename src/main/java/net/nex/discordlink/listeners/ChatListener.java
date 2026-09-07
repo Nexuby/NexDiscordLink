@@ -31,17 +31,23 @@ public class ChatListener implements Listener {
         String webhookUrl = plugin.getConfig().getString("chat-bridge.webhook-url");
         String message = org.bukkit.ChatColor.stripColor(event.getMessage());
         String playerName = event.getPlayer().getName();
+        String content = plugin.getDiscordMessageManager().format(
+                plugin.getConfig().getString("discord-messages.chat.minecraft-to-discord-format", "**{player}**: {message}"),
+                2000,
+                "player", playerName,
+                "message", message
+        );
 
         if (webhookUrl != null && !webhookUrl.isEmpty()) {
             Bukkit.getScheduler().runTaskAsynchronously(
                     plugin,
-                    () -> sendWebhook(webhookUrl, playerName, message)
+                    () -> sendWebhook(webhookUrl, playerName, content)
             );
         } else if (channelId != null && !channelId.isEmpty()) {
             if (plugin.getDiscordBot() == null || plugin.getDiscordBot().getJda() == null) return;
             TextChannel channel = plugin.getDiscordBot().getJda().getTextChannelById(channelId);
             if (channel != null) {
-                channel.sendMessage("**" + playerName + "**: " + message)
+                channel.sendMessage(content)
                         .setAllowedMentions(Collections.emptyList())
                         .queue();
             }
@@ -58,9 +64,18 @@ public class ChatListener implements Listener {
             connection.setReadTimeout(HTTP_TIMEOUT_MILLIS);
             connection.setDoOutput(true);
 
-            String avatarUrl = "https://mc-heads.net/avatar/" + username;
+            String webhookUsername = plugin.getDiscordMessageManager().format(
+                    plugin.getConfig().getString("discord-messages.chat.webhook-username", "{player}"),
+                    80,
+                    "player", username
+            );
+            String avatarUrl = plugin.getDiscordMessageManager().format(
+                    plugin.getConfig().getString("discord-messages.chat.webhook-avatar-url", "https://mc-heads.net/avatar/{player}"),
+                    2048,
+                    "player", username
+            );
             // Properly escape JSON strings to prevent injection
-            String safeUsername = escapeJson(username);
+            String safeUsername = escapeJson(webhookUsername);
             String safeContent = escapeJson(content);
             String safeAvatarUrl = escapeJson(avatarUrl);
             String json = String.format("{\"username\": \"%s\", \"avatar_url\": \"%s\", \"content\": \"%s\"}",

@@ -1,6 +1,7 @@
 package net.nex.discordlink.utils;
 
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.nex.discordlink.NexDiscordLink;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -26,10 +27,27 @@ public class UnlinkManager {
         String token = approvals.create(player.getUniqueId(), discordId);
         plugin.getDiscordBot().getJda().retrieveUserById(discordId).queue(user ->
                 user.openPrivateChannel().queue(channel ->
-                        channel.sendMessage(plugin.getLanguageManager().getMessage("security.unlink_dm_request"))
-                                .setActionRow(Button.danger(
+                        channel.sendMessage(plugin.getDiscordMessageManager().resolveText(
+                                        "unlink-confirmation",
+                                        "content",
+                                        "security.unlink_dm_request",
+                                        2000,
+                                        "player", player.getName(),
+                                        "uuid", player.getUniqueId().toString()
+                                ))
+                                .setActionRow(Button.of(
+                                        plugin.getDiscordMessageManager().resolveButtonStyle(
+                                                "unlink-confirmation",
+                                                ButtonStyle.DANGER
+                                        ),
                                         "confirm_unlink:" + player.getUniqueId() + ":" + token,
-                                        plugin.getLanguageManager().getMessage("security.unlink_dm_button")
+                                        plugin.getDiscordMessageManager().resolveText(
+                                                "unlink-confirmation",
+                                                "button-label",
+                                                "security.unlink_dm_button",
+                                                80,
+                                                "player", player.getName()
+                                        )
                                 ))
                                 .queue(
                                         success -> {},
